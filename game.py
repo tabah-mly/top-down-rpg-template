@@ -24,7 +24,7 @@ class Game:
 
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
-        self.background = InfiniteBackground("assets/imgs/bg.png", 5)
+        self.background = InfiniteBackground("assets/imgs/bg.png")
 
         self.player = Player(width // 2, height // 2, self.pointer)
 
