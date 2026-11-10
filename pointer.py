@@ -69,26 +69,27 @@ class Pointer:
         # cursor
         pygame.draw.circle(surface, (255, 255, 255), mouse_pos, self.cursor_radius, 2)
         if self.ranged:
-            line_width = 2
-            half_line_width = line_width // 2
-            line_height = self.cursor_radius * 1.5
-            pygame.draw.line(
-                surface,
-                (255, 255, 255),
-                (
-                    mouse_pos[0] - half_line_width,
-                    mouse_pos[1] - line_height - half_line_width,
-                ),
-                (mouse_pos[0] - half_line_width, mouse_pos[1] + line_height),
-                line_width,
-            )
-            pygame.draw.line(
-                surface,
-                (255, 255, 255),
-                (
-                    mouse_pos[0] - line_height - half_line_width,
-                    mouse_pos[1] - half_line_width,
-                ),
-                (mouse_pos[0] + line_height, mouse_pos[1] - half_line_width),
-                line_width,
-            )
+            pygame.draw.circle(surface, (255, 255, 255), mouse_pos, 3)
+            # line_width = 2
+            # half_line_width = line_width // 2
+            # line_height = self.cursor_radius * 1.5
+            # pygame.draw.line(
+            #     surface,
+            #     (255, 255, 255),
+            #     (
+            #         mouse_pos[0] - half_line_width,
+            #         mouse_pos[1] - line_height - half_line_width,
+            #     ),
+            #     (mouse_pos[0] - half_line_width, mouse_pos[1] + line_height),
+            #     line_width,
+            # )
+            # pygame.draw.line(
+            #     surface,
+            #     (255, 255, 255),
+            #     (
+            #         mouse_pos[0] - line_height - half_line_width,
+            #         mouse_pos[1] - half_line_width,
+            #     ),
+            #     (mouse_pos[0] + line_height, mouse_pos[1] - half_line_width),
+            #     line_width,
+            # )
