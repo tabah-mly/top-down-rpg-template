@@ -6,28 +6,28 @@ class Player:
     def __init__(self, x, y, pointer):
         self.animations = {
             "idle_down": SpriteSheet(
-                "assets/sprites/leonardo/idle_down.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/idle_down.png", 20, 26, 3, 0.1
             ),
             "walk_down": SpriteSheet(
-                "assets/sprites/leonardo/walk_down.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/walk_down.png", 20, 26, 3, 0.1
             ),
             "idle_up": SpriteSheet(
-                "assets/sprites/leonardo/idle_up.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/idle_up.png", 20, 26, 3, 0.1
             ),
             "walk_up": SpriteSheet(
-                "assets/sprites/leonardo/walk_up.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/walk_up.png", 20, 26, 3, 0.1
             ),
             "idle_left": SpriteSheet(
-                "assets/sprites/leonardo/idle_left.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/idle_left.png", 20, 26, 3, 0.1
             ),
             "walk_left": SpriteSheet(
-                "assets/sprites/leonardo/walk_left.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/walk_left.png", 20, 26, 3, 0.1
             ),
             "idle_right": SpriteSheet(
-                "assets/sprites/leonardo/idle_right.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/idle_right.png", 20, 26, 3, 0.1
             ),
             "walk_right": SpriteSheet(
-                "assets/sprites/leonardo/walk_right.png", 20, 26, 4, 0.1
+                "assets/imgs/sprites/leonardo/walk_right.png", 20, 26, 3, 0.1
             ),
         }
 
