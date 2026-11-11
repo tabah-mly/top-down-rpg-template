@@ -36,6 +36,10 @@ class Player:
         self.pointer = pointer
 
         self.aiming = False
+        self.bounds = None
+
+    def set_bounds(self, width, height):
+        self.bounds = pygame.Rect(0, 0, width, height)
 
     def handle_input(self, dt):
         keys = pygame.key.get_pressed()
@@ -75,7 +79,23 @@ class Player:
     def move(self, direction, dt):
         if direction.length_squared() > 0:
             direction = direction.normalize()
+
             self.pos += direction * self.stats["speed"] * dt
+
+            if self.bounds:
+                half_width = self.rect.width / 2
+                half_height = self.rect.height / 2
+
+                self.pos.x = max(
+                    half_width,
+                    min(self.pos.x, self.bounds.width - half_width)
+                )
+
+                self.pos.y = max(
+                    half_height,
+                    min(self.pos.y, self.bounds.height - half_height)
+                )
+
             self.rect.center = self.pos
 
             if not self.aiming:

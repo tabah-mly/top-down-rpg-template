@@ -13,15 +13,12 @@ class Pointer:
         self.ranged = True
         self.cursor_radius = 10
 
-    def draw(self, surface):
+    def draw(self, surface, player_screen_pos):
         if not self.is_active:
             return
         pygame.mouse.set_visible(not self.is_active)
         mouse_pos = pygame.mouse.get_pos()
-        center_sreen = (
-            pygame.Vector2(surface.get_width() // 2, surface.get_height() // 2)
-            - self.offset
-        )
+        center_sreen = pygame.Vector2(player_screen_pos)
 
         vec = mouse_pos - center_sreen
         self.direction = vec.normalize() if vec.length_squared() > 0 else self.direction

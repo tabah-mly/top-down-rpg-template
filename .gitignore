@@ -1,3 +1,5 @@
 .venv/
 __temp/
 __pycache__/
+*.tiled-session
+*.tiled-project

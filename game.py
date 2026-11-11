@@ -3,6 +3,7 @@ import pygame, random, math
 from camera import Camera
 from player import Player
 from pointer import Pointer
+from tiled_map import TiledMap
 
 
 class Game:
@@ -22,8 +23,14 @@ class Game:
 
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
+        self.tilemap = TiledMap("assets/maps/level_0/map.tmx", scale=2)
 
-        self.player = Player(width // 2, height // 2, self.pointer)
+        self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
+
+        self.player = Player(
+            self.tilemap.width // 2, self.tilemap.height // 2, self.pointer
+        )
+        self.player.set_bounds(self.tilemap.width, self.tilemap.height)
 
     def event_listener(self):
         for event in pygame.event.get():
@@ -43,8 +50,12 @@ class Game:
 
     def draw(self):
         self.screen.fill((0, 0, 0))
+
+        self.tilemap.draw(self.screen, self.camera)
         self.player.draw(self.screen, self.camera)
-        self.pointer.draw(self.screen)
+
+        player_screen_pos = self.camera.apply(self.player.rect).center
+        self.pointer.draw(self.screen, player_screen_pos)
 
     def start(self):
         while self.running:
