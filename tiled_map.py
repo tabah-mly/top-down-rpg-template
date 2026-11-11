@@ -1,5 +1,6 @@
 import pygame
 import pytmx
+from trigger import Trigger
 
 
 class TiledMap:
@@ -45,3 +46,29 @@ class TiledMap:
                     )
 
                     surface.blit(image, camera.apply(rect))
+
+    def load_triggers(self):
+        triggers = []
+
+        layer = self.tmx.get_layer_by_name("Triggers")
+
+        for obj in layer:
+            rect = pygame.Rect(
+                round(obj.x * self.scale),
+                round(obj.y * self.scale),
+                round(obj.width * self.scale),
+                round(obj.height * self.scale),
+            )
+
+            trigger = Trigger(
+                rect=rect,
+                name=obj.name or "",
+                event=obj.properties.get("event", "enter"),
+                action=obj.properties.get("action", "print"),
+                message=obj.properties.get("message", ""),
+                once=obj.properties.get("once", False),
+            )
+
+            triggers.append(trigger)
+
+        return triggers

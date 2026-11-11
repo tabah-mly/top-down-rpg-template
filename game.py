@@ -24,6 +24,7 @@ class Game:
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
         self.tilemap = TiledMap("assets/maps/level_0/map.tmx", scale=2)
+        self.triggers = self.tilemap.load_triggers()
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
 
@@ -48,6 +49,11 @@ class Game:
         self.player.update(dt, self.camera)
         self.camera.follow(self.player.rect)
 
+        for trigger in self.triggers:
+            if trigger.update(self.player.rect):
+                if trigger.action == "print":
+                    print(f"[TRIGGER] {trigger.name}: " f"{trigger.message}")
+
     def draw(self):
         self.screen.fill((0, 0, 0))
 
@@ -56,6 +62,9 @@ class Game:
 
         player_screen_pos = self.camera.apply(self.player.rect).center
         self.pointer.draw(self.screen, player_screen_pos)
+
+        for trigger in self.triggers:
+            trigger.draw_debug(self.screen, self.camera)
 
     def start(self):
         while self.running:
