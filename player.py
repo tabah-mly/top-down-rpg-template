@@ -1,35 +1,22 @@
 import pygame
+from animated_sprite import AnimatedSprite
 from spritesheet import SpriteSheet
 
 
 class Player:
     def __init__(self, x, y, pointer):
-        self.animations = {
-            "idle_down": SpriteSheet(
-                "assets/imgs/sprites/leonardo/idle_down.png", 20, 26, 3, 0.1
-            ),
-            "walk_down": SpriteSheet(
-                "assets/imgs/sprites/leonardo/walk_down.png", 20, 26, 3, 0.1
-            ),
-            "idle_up": SpriteSheet(
-                "assets/imgs/sprites/leonardo/idle_up.png", 20, 26, 3, 0.1
-            ),
-            "walk_up": SpriteSheet(
-                "assets/imgs/sprites/leonardo/walk_up.png", 20, 26, 3, 0.1
-            ),
-            "idle_left": SpriteSheet(
-                "assets/imgs/sprites/leonardo/idle_left.png", 20, 26, 3, 0.1
-            ),
-            "walk_left": SpriteSheet(
-                "assets/imgs/sprites/leonardo/walk_left.png", 20, 26, 3, 0.1
-            ),
-            "idle_right": SpriteSheet(
-                "assets/imgs/sprites/leonardo/idle_right.png", 20, 26, 3, 0.1
-            ),
-            "walk_right": SpriteSheet(
-                "assets/imgs/sprites/leonardo/walk_right.png", 20, 26, 3, 0.1
-            ),
-        }
+        self.animations = {}
+
+        directions = ["up", "down", "left", "right"]
+        states = ["idle", "walk"]
+
+        for state in states:
+            for direction in directions:
+                key = f"{state}_{direction}"
+                frames = SpriteSheet(
+                    f"assets/imgs/sprites/leonardo/{key}.png", 20, 26, scale=3
+                ).frames
+                self.animations[key] = AnimatedSprite(frames, speed=0.1)
 
         self.stats = {
             "max_hp": 100,
