@@ -1,9 +1,7 @@
 import pygame, sys
-from background import InfiniteBackground
+import pygame, random, math
 from camera import Camera
 from player import Player
-import pygame, random, math
-
 from pointer import Pointer
 
 
@@ -24,7 +22,6 @@ class Game:
 
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
-        self.background = InfiniteBackground("assets/imgs/bg.png")
 
         self.player = Player(width // 2, height // 2, self.pointer)
 
@@ -46,7 +43,6 @@ class Game:
 
     def draw(self):
         self.screen.fill((0, 0, 0))
-        self.background.draw(self.screen, self.camera.offset)
         self.player.draw(self.screen, self.camera)
         self.pointer.draw(self.screen)
 
