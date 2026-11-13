@@ -97,7 +97,7 @@
   </object>
  </objectgroup>
  <objectgroup id="5" name="Triggers">
-  <object id="5" name="WorldEntrance" x="378.568" y="642.932" width="38.3636" height="11.6364">
+  <object id="5" name="WorldEntrance" x="378.205" y="643.114" width="38.3636" height="11.6364">
    <properties>
     <property name="action" value="transition"/>
     <property name="event" value="enter"/>

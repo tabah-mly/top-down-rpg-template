@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 
 from collision import CollisionShape
 from trigger import Trigger
+from npc import NPC
 
 
 class TiledMap:
@@ -27,6 +28,11 @@ class TiledMap:
             int(obj.get("id"))
             for obj in root.findall(".//object")
             if obj.find("ellipse") is not None
+        }
+
+        self.object_classes = {
+            int(obj.get("id")): obj.get("class", obj.get("type", ""))
+            for obj in root.findall(".//object")
         }
 
     # ========================================================
@@ -169,3 +175,35 @@ class TiledMap:
                 round(height),
             ),
         )
+
+    def load_npcs(self):
+        npcs = []
+
+        try:
+            layer = self.tmx.get_layer_by_name("Entities")
+        except ValueError:
+            return npcs
+
+        for obj in layer:
+            object_class = self.object_classes.get(obj.id, "")
+
+            if object_class != "NPC":
+                continue
+
+            sprite = obj.properties.get("sprite")
+
+            if not sprite:
+                raise ValueError(f"NPC '{obj.name}' has no sprite property!")
+
+            npc = NPC(
+                x=obj.x * self.scale,
+                y=obj.y * self.scale,
+                name=obj.name or "NPC",
+                sprite=sprite,
+                direction=obj.properties.get("direction", "down"),
+                dialogue=obj.properties.get("dialogue", ""),
+            )
+
+            npcs.append(npc)
+
+        return npcs

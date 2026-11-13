@@ -27,6 +27,7 @@ class Game:
         self.tilemap = TiledMap("assets/maps/level0.tmx", scale=2)
         self.triggers = self.tilemap.load_triggers()
         self.collisions = self.tilemap.load_collisions()
+        self.npcs = self.tilemap.load_npcs()
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
 
@@ -49,6 +50,7 @@ class Game:
         self.tilemap = new_map
         self.triggers = self.tilemap.load_triggers()
         self.collisions = new_map.load_collisions()
+        self.npcs = self.tilemap.load_npcs()
 
         self.camera.set_bounds(new_map.width, new_map.height)
 
@@ -84,6 +86,9 @@ class Game:
         self.player.update(dt, self.camera)
         self.camera.follow(self.player.rect)
 
+        for npc in self.npcs:
+            npc.update(dt)
+
         for trigger in self.triggers:
             if trigger.update(self.player.rect):
                 if trigger.action == "print":
@@ -99,6 +104,8 @@ class Game:
         self.screen.fill((0, 0, 0))
 
         self.tilemap.draw(self.screen, self.camera)
+        for npc in self.npcs:
+            npc.draw(self.screen, self.camera)
         self.player.draw(self.screen, self.camera)
 
         player_screen_pos = self.camera.apply(self.player.rect).center

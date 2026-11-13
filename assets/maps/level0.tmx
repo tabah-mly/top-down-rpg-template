@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="61" height="41" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="9">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="61" height="41" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="14">
  <tileset firstgid="1" source="fsm_Town02_A2.tsx"/>
  <layer id="1" name="Tile Layer 1" width="61" height="41">
   <data encoding="csv">
@@ -55,12 +55,31 @@
     <property name="target_spawn" value="FlowerEntranceSpawn"/>
    </properties>
   </object>
+  <object id="10" name="ForestEntrance" x="503.545" y="642.182" width="38.3636" height="11.6364">
+   <properties>
+    <property name="action" value="transition"/>
+    <property name="event" value="enter"/>
+    <property name="target_map" value="forest.tmx"/>
+    <property name="target_spawn" value="ForestEntranceSpawn"/>
+   </properties>
+  </object>
  </objectgroup>
  <objectgroup id="3" name="Entities">
   <object id="3" name="WorldEntranceSpawn" type="PlayerSpawn" x="520.318" y="29.5568">
    <point/>
   </object>
   <object id="8" name="PlayerSpawn" type="PlayerSpawn" x="520.455" y="319.727">
+   <point/>
+  </object>
+  <object id="12" name="WorldForestEntranceSpawn" type="PlayerSpawn" x="522.5" y="603.75">
+   <point/>
+  </object>
+  <object id="13" name="Merchant" type="NPC" x="702" y="257.333">
+   <properties>
+    <property name="dialogue" value="Hi!"/>
+    <property name="direction" value="down"/>
+    <property name="sprite" value="dansi_5"/>
+   </properties>
    <point/>
   </object>
  </objectgroup>
