@@ -4,6 +4,7 @@ from camera import Camera
 from player import Player
 from pointer import Pointer
 from tiled_map import TiledMap
+from dialog import DialogWindow
 
 
 class Game:
@@ -33,6 +34,8 @@ class Game:
         )
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
 
+        self.dialog = DialogWindow(self.screen_width, self.screen_height)
+
     def change_map(self, map_path, spawn_name):
         new_map = TiledMap(f"assets/maps/{map_path}", scale=2)
 
@@ -57,6 +60,11 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
 
+            elif event.type == pygame.KEYDOWN:
+                if self.dialog.active:
+                    if event.key in (pygame.K_SPACE, pygame.K_RETURN):
+                        self.dialog.advance()
+
     def restart(self):
         self.__init__(self.screen_width, self.screen_height, self.screen_title)
 
@@ -65,6 +73,9 @@ class Game:
         return min(dt, 0.05)
 
     def update(self, dt):
+        if self.dialog.active:
+            return
+
         self.player.update(dt, self.camera)
         self.camera.follow(self.player.rect)
 
@@ -74,6 +85,9 @@ class Game:
                     print(f"[TRIGGER] {trigger.name}: " f"{trigger.message}")
                 if trigger.action == "transition":
                     self.change_map(trigger.target_map, trigger.target_spawn)
+                    break
+                elif trigger.action == "dialog":
+                    self.dialog.open(trigger.message)
                     break
 
     def draw(self):
@@ -87,6 +101,8 @@ class Game:
 
         for trigger in self.triggers:
             trigger.draw_debug(self.screen, self.camera)
+
+        self.dialog.draw(self.screen)
 
     def start(self):
         while self.running:
