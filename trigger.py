@@ -10,6 +10,8 @@ class Trigger:
         action="print",
         message="",
         once=False,
+        target_map=None,
+        target_spawn=None,
     ):
         self.rect = pygame.Rect(rect)
         self.name = name
@@ -17,6 +19,9 @@ class Trigger:
         self.action = action
         self.message = message
         self.once = once
+
+        self.target_map = target_map
+        self.target_spawn = target_spawn
 
         self.inside = False
         self.activated = False

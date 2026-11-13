@@ -23,7 +23,7 @@ class Game:
 
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
-        self.tilemap = TiledMap("assets/maps/level_0/map.tmx", scale=2)
+        self.tilemap = TiledMap("assets/maps/level0.tmx", scale=2)
         self.triggers = self.tilemap.load_triggers()
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
@@ -32,6 +32,25 @@ class Game:
             self.tilemap.width // 2, self.tilemap.height // 2, self.pointer
         )
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
+
+    def change_map(self, map_path, spawn_name):
+        new_map = TiledMap(f"assets/maps/{map_path}", scale=2)
+
+        spawn = new_map.tmx.get_object_by_name(spawn_name)
+
+        if spawn is None:
+            raise ValueError(f"Spawn point '{spawn_name}' not found!")
+
+        self.tilemap = new_map
+        self.triggers = self.tilemap.load_triggers()
+
+        self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
+
+        self.player.pos = pygame.Vector2(
+            spawn.x * self.tilemap.scale, spawn.y * self.tilemap.scale
+        )
+
+        self.player.rect.center = self.player.pos
 
     def event_listener(self):
         for event in pygame.event.get():
@@ -53,6 +72,9 @@ class Game:
             if trigger.update(self.player.rect):
                 if trigger.action == "print":
                     print(f"[TRIGGER] {trigger.name}: " f"{trigger.message}")
+                if trigger.action == "transition":
+                    self.change_map(trigger.target_map, trigger.target_spawn)
+                    break
 
     def draw(self):
         self.screen.fill((0, 0, 0))

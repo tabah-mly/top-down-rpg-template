@@ -67,6 +67,8 @@ class TiledMap:
                 action=obj.properties.get("action", "print"),
                 message=obj.properties.get("message", ""),
                 once=obj.properties.get("once", False),
+                target_map=obj.properties.get("target_map"),
+                target_spawn=obj.properties.get("target_spawn"),
             )
 
             triggers.append(trigger)
