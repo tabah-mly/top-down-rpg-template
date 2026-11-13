@@ -81,16 +81,10 @@ class TiledMap:
             return triggers
 
         for obj in layer:
-
-            rect = pygame.Rect(
-                round(obj.x * self.scale),
-                round(obj.y * self.scale),
-                round(obj.width * self.scale),
-                round(obj.height * self.scale),
-            )
+            shape = self.load_object_shape(obj)
 
             trigger = Trigger(
-                rect=rect,
+                shape=shape,
                 name=obj.name or "",
                 event=obj.properties.get("event", "enter"),
                 action=obj.properties.get("action", "print"),
@@ -117,67 +111,7 @@ class TiledMap:
             return collisions
 
         for obj in layer:
-
-            x = obj.x * self.scale
-            y = obj.y * self.scale
-            width = obj.width * self.scale
-            height = obj.height * self.scale
-
-            # --------------------------------------------
-            # Ellipse
-            # --------------------------------------------
-
-            if obj.id in self.ellipse_ids:
-
-                shape = CollisionShape(
-                    shape_type="ellipse",
-                    rect=(
-                        round(x),
-                        round(y),
-                        round(width),
-                        round(height),
-                    ),
-                )
-
-            # --------------------------------------------
-            # Polygon
-            # --------------------------------------------
-
-            elif hasattr(obj, "points") and obj.closed:
-
-                # apply_transformations() returns absolute
-                # coordinates and accounts for rotation.
-                transformed_points = obj.apply_transformations()
-
-                points = [
-                    (
-                        round(point[0] * self.scale),
-                        round(point[1] * self.scale),
-                    )
-                    for point in transformed_points
-                ]
-
-                shape = CollisionShape(
-                    shape_type="polygon",
-                    points=points,
-                )
-
-            # --------------------------------------------
-            # Rectangle
-            # --------------------------------------------
-
-            else:
-
-                shape = CollisionShape(
-                    shape_type="rect",
-                    rect=(
-                        round(x),
-                        round(y),
-                        round(width),
-                        round(height),
-                    ),
-                )
-
+            shape = self.load_object_shape(obj)
             collisions.append(shape)
 
         return collisions
@@ -189,3 +123,49 @@ class TiledMap:
             raise ValueError(f"Spawn point '{name}' not found in {self.filename}")
 
         return pygame.Vector2(spawn.x * self.scale, spawn.y * self.scale)
+
+    def load_object_shape(self, obj):
+        x = obj.x * self.scale
+        y = obj.y * self.scale
+        width = obj.width * self.scale
+        height = obj.height * self.scale
+
+        # Ellipse
+        if obj.id in self.ellipse_ids:
+            return CollisionShape(
+                shape_type="ellipse",
+                rect=(
+                    round(x),
+                    round(y),
+                    round(width),
+                    round(height),
+                ),
+            )
+
+        # Polygon
+        elif hasattr(obj, "points") and obj.closed:
+            transformed_points = obj.apply_transformations()
+
+            points = [
+                (
+                    round(point[0] * self.scale),
+                    round(point[1] * self.scale),
+                )
+                for point in transformed_points
+            ]
+
+            return CollisionShape(
+                shape_type="polygon",
+                points=points,
+            )
+
+        # Rectangle
+        return CollisionShape(
+            shape_type="rect",
+            rect=(
+                round(x),
+                round(y),
+                round(width),
+                round(height),
+            ),
+        )

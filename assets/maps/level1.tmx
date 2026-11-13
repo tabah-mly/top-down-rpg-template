@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="61" height="41" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="13">
+<map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="61" height="41" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="33">
  <tileset firstgid="1" source="fsm_Town02_A2.tsx"/>
  <layer id="1" name="Tile Layer 1" width="61" height="41">
   <data encoding="csv">
@@ -105,18 +105,63 @@
     <property name="target_spawn" value="WorldEntranceSpawn"/>
    </properties>
   </object>
-  <object id="7" name="FlowerBedMessage" x="374.75" y="543.167" width="43.1667" height="10.4167">
+  <object id="32" name="FlowerBedMessage" x="352.892" y="328.794">
    <properties>
     <property name="action" value="dialog"/>
     <property name="event" value="enter"/>
     <property name="message" value="Flower Bed!"/>
-    <property name="once" type="bool" value="false"/>
+    <property name="once" type="bool" value="true"/>
    </properties>
+   <polygon points="0,0 74.0448,-93.2941 116.852,-93.2941 126.686,-54.9462 172.386,-60.6698 228.498,-34.9137 255.108,45.2161 246.43,94.4388 231.969,130.497 236.018,187.733 212.3,215.206 156.188,194.601 113.96,192.884 41.6502,173.424 9.83408,117.333 -2.89238,105.886"/>
   </object>
  </objectgroup>
- <objectgroup id="6" name="Collisions" tintcolor="#ff0000">
-  <object id="8" x="377.5" y="479" width="84" height="30.5"/>
-  <object id="12" x="525.5" y="508" width="49" height="49">
+ <objectgroup color="#ff0000" id="6" name="Collisions">
+  <object id="14" x="370.5" y="338">
+   <polygon points="0,0 64,-81.5 101,-81.5 109.5,-48 149,-53 197.5,-30.5 220.5,39.5 213,82.5 200.5,114 204,164 183.5,188 135,170 98.5,168.5 36,151.5 8.5,102.5 -2.5,92.5"/>
+  </object>
+  <object id="15" x="169.5" y="478.5" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="17" x="270.5" y="308.75" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="18" x="157" y="172.25" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="19" x="380" y="74.75" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="20" x="555.5" y="91.75" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="21" x="780.5" y="171.25" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="22" x="651" y="378.25" width="71" height="69.5">
+   <ellipse/>
+  </object>
+  <object id="23" x="835" y="419" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="25" x="722" y="546.5" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="26" x="770.5" y="340" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="27" x="656.5" y="323" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="28" x="657.5" y="209" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="29" x="770" y="49" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="30" x="418.5" y="178" width="15" height="15">
+   <ellipse/>
+  </object>
+  <object id="31" x="227" y="82" width="15" height="15">
    <ellipse/>
   </object>
  </objectgroup>

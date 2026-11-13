@@ -60,20 +60,9 @@
   <object id="3" name="WorldEntranceSpawn" type="PlayerSpawn" x="520.318" y="29.5568">
    <point/>
   </object>
-  <object id="8" name="PlayerSpawn" type="PlayerSpawn" x="517" y="321">
+  <object id="8" name="PlayerSpawn" type="PlayerSpawn" x="520.455" y="319.727">
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="4" name="Collisions">
-  <object id="4" x="425.75" y="219.5" width="50.25" height="49">
-   <ellipse/>
-  </object>
-  <object id="5" x="602.75" y="193.25">
-   <polygon points="0,0 -102.25,57.5 28,32.5"/>
-  </object>
-  <object id="6" x="393.5" y="167" width="60" height="38.75"/>
-  <object id="7" x="675" y="162" width="98.5" height="39">
-   <capsule/>
-  </object>
- </objectgroup>
+ <objectgroup color="#ff0000" id="4" name="Collisions"/>
 </map>

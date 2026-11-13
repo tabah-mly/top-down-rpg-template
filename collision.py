@@ -80,12 +80,20 @@ class CollisionShape:
 
         return True
 
-    def draw_debug(self, surface, camera):
+    def draw_debug(self, surface, camera, color=None):
+        if color is None:
+            if self.shape_type == "rect":
+                color = (255, 0, 0)
+            elif self.shape_type == "ellipse":
+                color = (0, 180, 255)
+            elif self.shape_type == "polygon":
+                color = (0, 255, 100)
+
         if self.shape_type == "rect":
-            pygame.draw.rect(surface, (255, 0, 0), camera.apply(self.rect), 2)
+            pygame.draw.rect(surface, color, camera.apply(self.rect), 2)
 
         elif self.shape_type == "ellipse":
-            pygame.draw.ellipse(surface, (0, 180, 255), camera.apply(self.rect), 2)
+            pygame.draw.ellipse(surface, color, camera.apply(self.rect), 2)
 
         elif self.shape_type == "polygon":
             screen_points = [
@@ -93,4 +101,4 @@ class CollisionShape:
                 for point in self.points
             ]
 
-            pygame.draw.polygon(surface, (0, 255, 100), screen_points, 2)
+            pygame.draw.polygon(surface, color, screen_points, 2)
