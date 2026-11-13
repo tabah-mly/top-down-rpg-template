@@ -30,9 +30,9 @@ class Game:
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
 
-        self.player = Player(
-            self.tilemap.width // 2, self.tilemap.height // 2, self.pointer
-        )
+        spawn_position = self.tilemap.get_spawn("PlayerSpawn")
+
+        self.player = Player(spawn_position.x, spawn_position.y, self.pointer)
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
         self.player.set_collisions(self.collisions)
 
@@ -59,8 +59,6 @@ class Game:
         self.player.rect.center = self.player.pos
         self.player.set_bounds(new_map.width, new_map.height)
         self.player.set_collisions(self.collisions)
-
-        self.camera.follow(self.player.rect)
 
     def event_listener(self):
         for event in pygame.event.get():

@@ -1,4 +1,3 @@
-
 import pygame
 import pytmx
 import xml.etree.ElementTree as ET
@@ -15,17 +14,9 @@ class TiledMap:
 
         self.scale = scale
 
-        self.width = (
-            self.tmx.width *
-            self.tmx.tilewidth *
-            self.scale
-        )
+        self.width = self.tmx.width * self.tmx.tilewidth * self.scale
 
-        self.height = (
-            self.tmx.height *
-            self.tmx.tileheight *
-            self.scale
-        )
+        self.height = self.tmx.height * self.tmx.tileheight * self.scale
 
         self.scaled_tiles = {}
 
@@ -190,3 +181,11 @@ class TiledMap:
             collisions.append(shape)
 
         return collisions
+
+    def get_spawn(self, name="PlayerSpawn"):
+        spawn = self.tmx.get_object_by_name(name)
+
+        if spawn is None:
+            raise ValueError(f"Spawn point '{name}' not found in {self.filename}")
+
+        return pygame.Vector2(spawn.x * self.scale, spawn.y * self.scale)
