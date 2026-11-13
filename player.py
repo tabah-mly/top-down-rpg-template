@@ -38,6 +38,14 @@ class Player:
         self.aiming = False
         self.bounds = None
 
+        self.collisions = []
+
+    def set_collisions(self, collisions):
+        self.collisions = collisions
+
+    def is_colliding(self):
+        return any(collision.collides(self.rect) for collision in self.collisions)
+
     def set_bounds(self, width, height):
         self.bounds = pygame.Rect(0, 0, width, height)
 
@@ -80,24 +88,47 @@ class Player:
         if direction.length_squared() > 0:
             direction = direction.normalize()
 
-            self.pos += direction * self.stats["speed"] * dt
+            movement = direction * self.stats["speed"] * dt
+
+            # --------------------------------
+            # Horizontal movement
+            # --------------------------------
+            old_x = self.pos.x
+            self.pos.x += movement.x
 
             if self.bounds:
                 half_width = self.rect.width / 2
-                half_height = self.rect.height / 2
-
                 self.pos.x = max(
-                    half_width,
-                    min(self.pos.x, self.bounds.width - half_width)
-                )
-
-                self.pos.y = max(
-                    half_height,
-                    min(self.pos.y, self.bounds.height - half_height)
+                    half_width, min(self.pos.x, self.bounds.width - half_width)
                 )
 
             self.rect.center = self.pos
 
+            if self.is_colliding():
+                self.pos.x = old_x
+                self.rect.center = self.pos
+
+            # --------------------------------
+            # Vertical movement
+            # --------------------------------
+            old_y = self.pos.y
+            self.pos.y += movement.y
+
+            if self.bounds:
+                half_height = self.rect.height / 2
+                self.pos.y = max(
+                    half_height, min(self.pos.y, self.bounds.height - half_height)
+                )
+
+            self.rect.center = self.pos
+
+            if self.is_colliding():
+                self.pos.y = old_y
+                self.rect.center = self.pos
+
+            # --------------------------------
+            # Animation and facing
+            # --------------------------------
             if not self.aiming:
                 if abs(direction.x) > abs(direction.y):
                     self.set_facing("right" if direction.x > 0 else "left")
@@ -105,6 +136,7 @@ class Player:
                     self.set_facing("down" if direction.y > 0 else "up")
 
             self.set_state("walk")
+
         else:
             self.set_state("idle")
 

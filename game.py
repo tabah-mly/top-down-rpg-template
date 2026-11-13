@@ -26,6 +26,7 @@ class Game:
         self.camera = Camera(self.screen_width, self.screen_height)
         self.tilemap = TiledMap("assets/maps/level0.tmx", scale=2)
         self.triggers = self.tilemap.load_triggers()
+        self.collisions = self.tilemap.load_collisions()
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
 
@@ -33,6 +34,7 @@ class Game:
             self.tilemap.width // 2, self.tilemap.height // 2, self.pointer
         )
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
+        self.player.set_collisions(self.collisions)
 
         self.dialog = DialogWindow(self.screen_width, self.screen_height)
 
@@ -46,14 +48,19 @@ class Game:
 
         self.tilemap = new_map
         self.triggers = self.tilemap.load_triggers()
+        self.collisions = new_map.load_collisions()
 
-        self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
+        self.camera.set_bounds(new_map.width, new_map.height)
 
         self.player.pos = pygame.Vector2(
-            spawn.x * self.tilemap.scale, spawn.y * self.tilemap.scale
+            spawn.x * new_map.scale, spawn.y * new_map.scale
         )
 
         self.player.rect.center = self.player.pos
+        self.player.set_bounds(new_map.width, new_map.height)
+        self.player.set_collisions(self.collisions)
+
+        self.camera.follow(self.player.rect)
 
     def event_listener(self):
         for event in pygame.event.get():
@@ -103,6 +110,10 @@ class Game:
             trigger.draw_debug(self.screen, self.camera)
 
         self.dialog.draw(self.screen)
+
+        # Collision debug
+        for collision in self.collisions:
+            collision.draw_debug(self.screen, self.camera)
 
     def start(self):
         while self.running:
