@@ -178,6 +178,7 @@ class TiledMap:
 
     def load_npcs(self):
         npcs = []
+        paths = self.load_npc_paths()
 
         try:
             layer = self.tmx.get_layer_by_name("Entities")
@@ -195,6 +196,13 @@ class TiledMap:
             if not sprite:
                 raise ValueError(f"NPC '{obj.name}' has no sprite property!")
 
+            path_name = obj.properties.get("path", "")
+
+            if obj.properties.get("movement") == "path" and path_name not in paths:
+                raise ValueError(
+                    f"NPC '{obj.name}' references missing path '{path_name}'"
+                )
+
             npc = NPC(
                 x=obj.x * self.scale,
                 y=obj.y * self.scale,
@@ -202,8 +210,60 @@ class TiledMap:
                 sprite=sprite,
                 direction=obj.properties.get("direction", "down"),
                 dialogue=obj.properties.get("dialogue", ""),
+                movement=obj.properties.get("movement", "static"),
+                speed=float(obj.properties.get("speed", 60)),
+                patrol_distance=float(obj.properties.get("patrol_distance", 64))
+                * self.scale,
+                pause_duration=float(obj.properties.get("pause_duration", 1.5)),
+                path=paths.get(path_name, []),
             )
 
             npcs.append(npc)
 
         return npcs
+
+    def load_npc_paths(self):
+        paths = {}
+
+        root = ET.parse(self.filename).getroot()
+
+        layer = root.find("./objectgroup[@name='NPCPaths']")
+
+        if layer is None:
+            return paths
+
+        for obj in layer.findall("object"):
+            # Check Polyline first
+            path_element = obj.find("polyline")
+
+            # If not a Polyline, check Polygon
+            if path_element is None:
+                path_element = obj.find("polygon")
+
+            if path_element is None:
+                continue
+
+            name = obj.get("name", "")
+
+            if not name:
+                continue
+
+            origin_x = float(obj.get("x", 0))
+            origin_y = float(obj.get("y", 0))
+
+            points = []
+
+            for pair in path_element.get("points", "").split():
+                x, y = map(float, pair.split(","))
+
+                points.append(
+                    pygame.Vector2(
+                        (origin_x + x) * self.scale,
+                        (origin_y + y) * self.scale,
+                    )
+                )
+
+            if len(points) >= 2:
+                paths[name] = points
+
+        return paths
