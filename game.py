@@ -1,6 +1,7 @@
 import pygame, sys
 import pygame, random, math
 from camera import Camera
+from font_manager import FontManager
 from player import Player
 from pointer import Pointer
 from tiled_map import TiledMap
@@ -20,6 +21,9 @@ class Game:
         pygame.display.set_caption(title)
         self.clock = pygame.time.Clock()
 
+        self.font_manager = FontManager()
+        self.font_manager.load("main", "assets/fonts/PixelifySans-Regular.ttf")
+
         self.running = True
 
         self.pointer = Pointer()
@@ -37,7 +41,13 @@ class Game:
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
         self.player.set_collisions(self.collisions)
 
-        self.dialog = DialogWindow(self.screen_width, self.screen_height)
+        self.dialog = DialogWindow(self.screen_width, self.screen_height, self.font_manager)
+
+        interact_icon = pygame.image.load(
+            "assets/imgs/system/interact.png"
+        ).convert_alpha()
+
+        self.interact_icon = pygame.transform.scale_by(interact_icon, 2)
 
     def change_map(self, map_path, spawn_name):
         new_map = TiledMap(f"assets/maps/{map_path}", scale=2)
@@ -62,6 +72,22 @@ class Game:
         self.player.set_bounds(new_map.width, new_map.height)
         self.player.set_collisions(self.collisions)
 
+    def interact_with_npc(self):
+        npc = self.get_nearby_npc()
+
+        if npc and npc.dialogue:
+            self.dialog.open(npc.dialogue)
+
+    def get_nearby_npc(self):
+        nearby_npcs = [npc for npc in self.npcs if npc.can_interact(self.player.rect)]
+
+        if not nearby_npcs:
+            return None
+
+        player_pos = pygame.Vector2(self.player.rect.center)
+
+        return min(nearby_npcs, key=lambda npc: player_pos.distance_to(npc.rect.center))
+
     def event_listener(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -71,6 +97,9 @@ class Game:
                 if self.dialog.active:
                     if event.key in (pygame.K_SPACE, pygame.K_RETURN):
                         self.dialog.advance()
+
+                elif event.key == pygame.K_e:
+                    self.interact_with_npc()
 
     def restart(self):
         self.__init__(self.screen_width, self.screen_height, self.screen_title)
@@ -104,8 +133,18 @@ class Game:
         self.screen.fill((0, 0, 0))
 
         self.tilemap.draw(self.screen, self.camera)
+        nearby_npc = None
+
+        if not self.dialog.active:
+            nearby_npc = self.get_nearby_npc()
+
         for npc in self.npcs:
-            npc.draw(self.screen, self.camera)
+            npc.draw(
+                self.screen,
+                self.camera,
+                interact_icon=(self.interact_icon if npc == nearby_npc else None),
+            )
+
         self.player.draw(self.screen, self.camera)
 
         player_screen_pos = self.camera.apply(self.player.rect).center

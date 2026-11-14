@@ -2,8 +2,8 @@ import pygame
 
 
 class DialogWindow:
-    def __init__(self, screen_width, screen_height):
-        self.image = pygame.image.load("assets/imgs/system/window.png").convert_alpha()
+    def __init__(self, screen_width, screen_height, font_manager):
+        self.image = pygame.image.load("assets/imgs/system/window_dialog.png").convert_alpha()
 
         # Keep the image's original aspect ratio.
         # self.width = screen_width - 80
@@ -13,17 +13,21 @@ class DialogWindow:
 
         # self.image = pygame.transform.smoothscale(self.image, (self.width, self.height))
 
-        self.image = pygame.image.load(
-            "assets/imgs/system/window.png"
-        ).convert_alpha()
+        # self.image = pygame.image.load(
+        #     "assets/imgs/system/window.png"
+        # ).convert_alpha()
 
         self.width, self.height = self.image.get_size()
 
         self.x = (screen_width - self.width) // 2
         self.y = screen_height - self.height - 32
 
-        self.font = pygame.font.Font(None, 30)
-        self.prompt_font = pygame.font.Font(None, 22)
+        self.font_manager = font_manager
+        self.font = self.font_manager.get("main", 22)
+        self.prompt_font = self.font_manager.get("main", 20)
+
+        # self.font = pygame.font.Font(None, 30)
+        # self.prompt_font = pygame.font.Font(None, 22)
 
         self.active = False
         self.pages = []
@@ -87,7 +91,8 @@ class DialogWindow:
         lines = self.pages[self.current_page]
 
         for i, line in enumerate(lines):
-            text_surface = self.font.render(line, True, (255, 255, 255))
+            # text_surface = self.font.render(line, True, (255, 255, 255))
+            text_surface = self.font.render(line, False, (255, 255, 255))
 
             surface.blit(
                 text_surface,
