@@ -2,6 +2,8 @@ import pygame
 from animated_sprite import AnimatedSprite
 from spritesheet import SpriteSheet
 from collision import CollisionBox
+from projectile import Projectile
+from attack import Attack
 
 
 class Player:
@@ -50,6 +52,16 @@ class Player:
         self.collisions = []
         self.npcs = []
 
+        self.is_attack = False
+        self.attack_timer = 0
+        self.attack_duration = 0.15
+
+        self.prev_mouse_left = False
+        self.prev_mouse_right = False
+
+        self.projectiles = []
+        self.attack = Attack()
+
     def set_npcs(self, npcs):
         self.npcs = npcs
 
@@ -79,6 +91,7 @@ class Player:
     def handle_input(self, dt):
         keys = pygame.key.get_pressed()
         self.aiming = pygame.mouse.get_pressed()[0]
+        self.mouse_handler()
 
         direction = pygame.Vector2(
             keys[pygame.K_d] - keys[pygame.K_a],
@@ -91,9 +104,12 @@ class Player:
         if self.aiming:
             self.update_facing_mouse(camera)
         self.animator.update(dt)
+        self.update_projectiles(dt)
+        self.attack.update(dt)
 
     def draw(self, surface, camera):
         self.draw_sprites(surface, camera)
+        self.draw_attack(surface, camera)
 
     def set_state(self, state):
         if state != self.state:
@@ -210,3 +226,35 @@ class Player:
         self.body_collider.draw_debug(surface, camera, (0, 255, 0))
 
         self.hurtbox.draw_debug(surface, camera, (255, 0, 255))
+
+    def mouse_handler(self):
+        mouse = pygame.mouse.get_pressed()
+
+        # Change attack type (ranged or melee)
+        if mouse[2] and not self.prev_mouse_right:
+            self.pointer.ranged = not self.pointer.ranged
+        self.prev_mouse_right = mouse[2]
+
+        # Acttack Logic
+        if mouse[0] and not self.prev_mouse_left:
+            if self.pointer.ranged:
+                if self.pointer.direction.length_squared() > 0:
+                    projectile = Projectile(
+                        self.pos, self.pointer.direction, self.stats["speed"]
+                    )
+                    self.projectiles.append(projectile)
+            else:
+                self.attack.start()
+
+        self.projectiles = [p for p in self.projectiles if p.alive]
+        self.prev_mouse_left = mouse[0]
+
+    def update_projectiles(self, dt):
+        for projectile in self.projectiles:
+            projectile.update(dt)
+
+    def draw_attack(self, surface, camera):
+        for projectile in self.projectiles:
+            projectile.draw(surface, camera)
+
+        self.attack.draw(surface, camera, self.pos)
