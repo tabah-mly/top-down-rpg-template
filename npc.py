@@ -20,6 +20,9 @@ class NPC:
         patrol_distance=64,
         pause_duration=1.5,
         path=None,
+        can_be_damaged=False,
+        max_hp=100,
+        interact_range=48,
     ):
         self.name = name
         self.sprite = sprite
@@ -79,7 +82,14 @@ class NPC:
         }[self.facing]
 
         self.player = None
-        self.can_be_damaged = False
+
+        # Combat properties
+        self.can_be_damaged = can_be_damaged
+        self.max_hp = max_hp
+        self.hp = max_hp
+
+        # Interaction
+        self.interact_range = interact_range
 
     def update(self, dt):
         if self.movement == "path":
@@ -107,12 +117,7 @@ class NPC:
 
         text = font.render("E", True, (255, 255, 255))
 
-        prompt_rect = pygame.Rect(
-            0,
-            0,
-            26,
-            24,
-        )
+        prompt_rect = pygame.Rect(0, 0, 26, 24)
 
         prompt_rect.midbottom = (
             npc_rect.centerx,
@@ -141,11 +146,11 @@ class NPC:
             text.get_rect(center=prompt_rect.center),
         )
 
-    def can_interact(self, player_rect, distance=90):
+    def can_interact(self, player_rect):
         player_pos = pygame.Vector2(player_rect.center)
         npc_pos = pygame.Vector2(self.rect.center)
 
-        return player_pos.distance_to(npc_pos) <= distance
+        return player_pos.distance_to(npc_pos) <= self.interact_range
 
     def set_animation(self, state, facing=None):
         if facing is None:

@@ -1,0 +1,15 @@
+{
+    "giant_skeleton": {
+        "sprite": "giant_skeleton",
+        "max_hp": 1000,
+        "damage": 35,
+        "speed": 45,
+
+        "respawn": false,
+        "respawn_delay": 0,
+
+        "activation": "trigger",
+        "show_health_bar": true,
+        "music": "boss_battle"
+    }
+}

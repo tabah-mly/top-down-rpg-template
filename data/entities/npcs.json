@@ -1,0 +1,54 @@
+{
+    "village_merchant": {
+        "sprite": "dansi_5",
+        "direction": "down",
+        "dialogue": "Hi!",
+        "movement": "path",
+        "speed": 60,
+        "patrol_distance": 64,
+        "pause_duration": 1,
+        "path": "merchant_route",
+        "can_be_damaged": false,
+        "max_hp": 100,
+        "interact_range": 48
+    },
+    "christopher": {
+        "sprite": "christopher",
+        "direction": "down",
+        "dialogue": "Hi!",
+        "movement": "patrol",
+        "speed": 60,
+        "patrol_distance": 64,
+        "pause_duration": 1.5,
+        "path": "",
+        "can_be_damaged": false,
+        "max_hp": 100,
+        "interact_range": 48
+    },
+    "dansi_2": {
+        "sprite": "dansi_2",
+        "direction": "down",
+        "dialogue": "Hi!",
+        "movement": "static",
+        "speed": 60,
+        "patrol_distance": 64,
+        "pause_duration": 1.5,
+        "path": "",
+        "can_be_damaged": false,
+        "max_hp": 100,
+        "interact_range": 48
+    },
+    "leonhard": {
+        "sprite": "leonhard",
+        "direction": "left",
+        "dialogue": "Hi!",
+        "movement": "patrol",
+        "speed": 60,
+        "patrol_distance": 64,
+        "pause_duration": 1.5,
+        "path": "",
+        "can_be_damaged": false,
+        "max_hp": 100,
+        "interact_range": 48
+    }
+}

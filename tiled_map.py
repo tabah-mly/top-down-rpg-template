@@ -1,10 +1,10 @@
 import pygame
 import pytmx
 import xml.etree.ElementTree as ET
-
 from collision import CollisionShape
 from trigger import Trigger
 from npc import NPC
+from entity_database import EntityDatabase
 
 
 class TiledMap:
@@ -14,6 +14,8 @@ class TiledMap:
         self.tmx = pytmx.load_pygame(filename)
 
         self.scale = scale
+
+        self.entity_database = EntityDatabase()
 
         self.width = self.tmx.width * self.tmx.tilewidth * self.scale
 
@@ -191,31 +193,48 @@ class TiledMap:
             if object_class != "NPC":
                 continue
 
-            sprite = obj.properties.get("sprite")
+            entity_id = obj.properties.get("entity_id")
+
+            if not entity_id:
+                raise ValueError(f"NPC '{obj.name}' has no entity_id property!")
+
+            # Tiled properties override the JSON definition.
+            overrides = {
+                key: value
+                for key, value in obj.properties.items()
+                if key != "entity_id"
+            }
+
+            config = self.entity_database.get("npc", entity_id, overrides)
+
+            sprite = config.get("sprite")
 
             if not sprite:
-                raise ValueError(f"NPC '{obj.name}' has no sprite property!")
+                raise ValueError(f"NPC '{entity_id}' has no sprite configured!")
 
-            path_name = obj.properties.get("path", "")
+            path_name = config.get("path", "")
 
-            if obj.properties.get("movement") == "path" and path_name not in paths:
-                raise ValueError(
-                    f"NPC '{obj.name}' references missing path '{path_name}'"
-                )
+            if config.get("movement") == "path":
+                if path_name not in paths:
+                    raise ValueError(
+                        f"NPC '{entity_id}' references " f"missing path '{path_name}'"
+                    )
 
             npc = NPC(
                 x=obj.x * self.scale,
                 y=obj.y * self.scale,
-                name=obj.name or "NPC",
+                name=obj.name or entity_id,
                 sprite=sprite,
-                direction=obj.properties.get("direction", "down"),
-                dialogue=obj.properties.get("dialogue", ""),
-                movement=obj.properties.get("movement", "static"),
-                speed=float(obj.properties.get("speed", 60)),
-                patrol_distance=float(obj.properties.get("patrol_distance", 64))
-                * self.scale,
-                pause_duration=float(obj.properties.get("pause_duration", 1.5)),
+                direction=config.get("direction", "down"),
+                dialogue=config.get("dialogue", ""),
+                movement=config.get("movement", "static"),
+                speed=float(config.get("speed", 60)),
+                patrol_distance=float(config.get("patrol_distance", 64)) * self.scale,
+                pause_duration=float(config.get("pause_duration", 1.5)),
                 path=paths.get(path_name, []),
+                can_be_damaged=config.get("can_be_damaged", False),
+                max_hp=int(config.get("max_hp", 100)),
+                interact_range=float(config.get("interact_range", 48)) * self.scale,
             )
 
             npcs.append(npc)

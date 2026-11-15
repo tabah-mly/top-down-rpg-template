@@ -1,0 +1,35 @@
+{
+    "slime": {
+        "sprite": "slime",
+        "max_hp": 50,
+        "damage": 10,
+
+        "movement": "patrol",
+        "patrol_speed": 50,
+        "patrol_path": "",
+        "pause_duration": 1.5,
+
+        "vision_range": 120,
+        "hearing_range": 80,
+        "alert_duration": 5,
+        "search_duration": 10,
+        "attack_range": 25
+    },
+
+    "skeleton": {
+        "sprite": "skeleton",
+        "max_hp": 100,
+        "damage": 20,
+
+        "movement": "patrol",
+        "patrol_speed": 60,
+        "patrol_path": "skeleton_route",
+        "pause_duration": 2,
+
+        "vision_range": 180,
+        "hearing_range": 120,
+        "alert_duration": 5,
+        "search_duration": 12,
+        "attack_range": 35
+    }
+}
