@@ -1,6 +1,7 @@
 import pygame
 from animated_sprite import AnimatedSprite
 from spritesheet import SpriteSheet
+from collision import CollisionBox
 
 
 class Player:
@@ -33,18 +34,44 @@ class Player:
         self.pos = pygame.Vector2(x, y)
         self.rect = self.animator.image.get_rect(center=(x, y))
 
+        # Physical collision area
+        self.body_collider = CollisionBox(width=24, height=16, offset=(0, 25))
+
+        # Area that can receive damage
+        self.hurtbox = CollisionBox(width=30, height=42, offset=(0, 10))
+
+        self.update_collision_boxes()
+
         self.pointer = pointer
 
         self.aiming = False
         self.bounds = None
 
         self.collisions = []
+        self.npcs = []
+
+    def set_npcs(self, npcs):
+        self.npcs = npcs
 
     def set_collisions(self, collisions):
         self.collisions = collisions
 
     def is_colliding(self):
-        return any(collision.collides(self.rect) for collision in self.collisions)
+        # Check map obstacles
+        map_collision = any(
+            collision.collides(self.body_collider.rect) for collision in self.collisions
+        )
+
+        if map_collision:
+            return True
+
+        # Check NPC body colliders
+        npc_collision = any(
+            npc.body_collider.rect.colliderect(self.body_collider.rect)
+            for npc in self.npcs
+        )
+
+        return npc_collision
 
     def set_bounds(self, width, height):
         self.bounds = pygame.Rect(0, 0, width, height)
@@ -97,16 +124,25 @@ class Player:
             self.pos.x += movement.x
 
             if self.bounds:
-                half_width = self.rect.width / 2
+                # half_width = self.rect.width / 2
+                # self.pos.x = max(
+                #     half_width, min(self.pos.x, self.bounds.width - half_width)
+                # )
+                half_width = self.body_collider.width / 2
+                offset_x = self.body_collider.offset.x
+
                 self.pos.x = max(
-                    half_width, min(self.pos.x, self.bounds.width - half_width)
+                    half_width - offset_x,
+                    min(self.pos.x, self.bounds.width - half_width - offset_x),
                 )
 
             self.rect.center = self.pos
+            self.update_collision_boxes()
 
             if self.is_colliding():
                 self.pos.x = old_x
                 self.rect.center = self.pos
+                self.update_collision_boxes()
 
             # --------------------------------
             # Vertical movement
@@ -115,16 +151,25 @@ class Player:
             self.pos.y += movement.y
 
             if self.bounds:
-                half_height = self.rect.height / 2
+                # half_height = self.rect.height / 2
+                # self.pos.y = max(
+                #     half_height, min(self.pos.y, self.bounds.height - half_height)
+                # )
+                half_height = self.body_collider.height / 2
+                offset_y = self.body_collider.offset.y
+
                 self.pos.y = max(
-                    half_height, min(self.pos.y, self.bounds.height - half_height)
+                    half_height - offset_y,
+                    min(self.pos.y, self.bounds.height - half_height - offset_y),
                 )
 
             self.rect.center = self.pos
+            self.update_collision_boxes()
 
             if self.is_colliding():
                 self.pos.y = old_y
                 self.rect.center = self.pos
+                self.update_collision_boxes()
 
             # --------------------------------
             # Animation and facing
@@ -156,3 +201,12 @@ class Player:
         image = self.animator.image
         player_rect = camera.apply(self.rect)
         surface.blit(image, player_rect)
+
+    def update_collision_boxes(self):
+        self.body_collider.update(self.pos)
+        self.hurtbox.update(self.pos)
+
+    def draw_collision_debug(self, surface, camera):
+        self.body_collider.draw_debug(surface, camera, (0, 255, 0))
+
+        self.hurtbox.draw_debug(surface, camera, (255, 0, 255))

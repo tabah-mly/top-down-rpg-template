@@ -102,3 +102,22 @@ class CollisionShape:
             ]
 
             pygame.draw.polygon(surface, color, screen_points, 2)
+
+
+class CollisionBox:
+    def __init__(self, width, height, offset=(0, 0)):
+        self.width = width
+        self.height = height
+        self.offset = pygame.Vector2(offset)
+
+        self.rect = pygame.Rect(0, 0, width, height)
+
+    def update(self, anchor):
+        position = pygame.Vector2(anchor) + self.offset
+        self.rect.center = round(position.x), round(position.y)
+
+    def collides(self, other):
+        return self.rect.colliderect(other.rect)
+
+    def draw_debug(self, surface, camera, color):
+        pygame.draw.rect(surface, color, camera.apply(self.rect), 2)

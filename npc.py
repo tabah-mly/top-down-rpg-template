@@ -3,6 +3,7 @@ import pygame
 
 from animated_sprite import AnimatedSprite
 from spritesheet import SpriteSheet
+from collision import CollisionBox
 
 
 class NPC:
@@ -49,6 +50,12 @@ class NPC:
         self.pos = pygame.Vector2(x, y)
 
         self.rect = self.animator.image.get_rect(center=(x, y))
+
+        self.body_collider = CollisionBox(width=24, height=16, offset=(0, 25))
+
+        self.hurtbox = CollisionBox(width=30, height=42, offset=(0, 10))
+
+        self.update_collision_boxes()
 
         self.movement = movement
         self.speed = speed
@@ -164,6 +171,7 @@ class NPC:
 
         self.pos += direction * movement
         self.rect.center = self.pos
+        self.update_collision_boxes()
 
         self.travelled += movement
 
@@ -204,6 +212,7 @@ class NPC:
         if distance <= 0.5:
             self.pos = target.copy()
             self.rect.center = self.pos
+            self.update_collision_boxes()
 
             self.path_index = (self.path_index + 1) % len(self.path)
 
@@ -222,6 +231,7 @@ class NPC:
 
         self.pos += direction * movement
         self.rect.center = self.pos
+        self.update_collision_boxes()
 
         # Determine facing direction
         if abs(direction.x) > abs(direction.y):
@@ -230,3 +240,12 @@ class NPC:
             facing = "down" if direction.y > 0 else "up"
 
         self.set_animation("walk", facing)
+
+    def update_collision_boxes(self):
+        self.body_collider.update(self.pos)
+        self.hurtbox.update(self.pos)
+
+    def draw_collision_debug(self, surface, camera):
+        self.body_collider.draw_debug(surface, camera, (0, 255, 0))
+
+        self.hurtbox.draw_debug(surface, camera, (255, 0, 255))

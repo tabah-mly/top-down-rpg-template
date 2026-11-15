@@ -40,6 +40,7 @@ class Game:
         self.player = Player(spawn_position.x, spawn_position.y, self.pointer)
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
         self.player.set_collisions(self.collisions)
+        self.player.set_npcs(self.npcs)
 
         self.dialog = DialogWindow(self.screen_width, self.screen_height, self.font_manager)
 
@@ -48,6 +49,8 @@ class Game:
         ).convert_alpha()
 
         self.interact_icon = pygame.transform.scale_by(interact_icon, 2)
+
+        self.debug_collisions = True
 
     def change_map(self, map_path, spawn_name):
         new_map = TiledMap(f"assets/maps/{map_path}", scale=2)
@@ -71,6 +74,7 @@ class Game:
         self.player.rect.center = self.player.pos
         self.player.set_bounds(new_map.width, new_map.height)
         self.player.set_collisions(self.collisions)
+        self.player.set_npcs(self.npcs)
 
     def interact_with_npc(self):
         npc = self.get_nearby_npc()
@@ -119,7 +123,7 @@ class Game:
             npc.update(dt)
 
         for trigger in self.triggers:
-            if trigger.update(self.player.rect):
+            if trigger.update(self.player.body_collider.rect):
                 if trigger.action == "print":
                     print(f"[TRIGGER] {trigger.name}: " f"{trigger.message}")
                 if trigger.action == "transition":
@@ -158,6 +162,12 @@ class Game:
         # Collision debug
         for collision in self.collisions:
             collision.draw_debug(self.screen, self.camera)
+
+        if self.debug_collisions:
+            self.player.draw_collision_debug(self.screen, self.camera)
+
+            for npc in self.npcs:
+                npc.draw_collision_debug(self.screen, self.camera)
 
     def start(self):
         while self.running:
