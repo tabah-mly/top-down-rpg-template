@@ -61,6 +61,7 @@ class Player:
 
         self.projectiles = []
         self.attack = Attack()
+        self.attack.is_debug = True
 
     def set_npcs(self, npcs):
         self.npcs = npcs
@@ -101,11 +102,15 @@ class Player:
 
     def update(self, dt, camera):
         self.handle_input(dt)
+
         if self.aiming:
             self.update_facing_mouse(camera)
+
         self.animator.update(dt)
         self.update_projectiles(dt)
-        self.attack.update(dt)
+
+        self.attack.update(dt, self.pos)
+        self.check_attack_collisions()
 
     def draw(self, surface, camera):
         self.draw_sprites(surface, camera)
@@ -253,8 +258,28 @@ class Player:
         for projectile in self.projectiles:
             projectile.update(dt)
 
+            if not projectile.alive:
+                continue
+
+            for npc in self.npcs:
+                if projectile.collides_with(npc):
+                    print(f"Projectile hit NPC: {npc.name}")
+
+                    projectile.alive = False
+                    break
+
+        # Remove expired or hit projectiles
+        self.projectiles = [
+            projectile for projectile in self.projectiles if projectile.alive
+        ]
+
     def draw_attack(self, surface, camera):
         for projectile in self.projectiles:
             projectile.draw(surface, camera)
 
         self.attack.draw(surface, camera, self.pos)
+
+    def check_attack_collisions(self):
+        for npc in self.npcs:
+            if self.attack.collides_with(npc):
+                print(f"Hit NPC: {npc.name}")
