@@ -1,4 +1,3 @@
-
 import pygame
 
 
@@ -32,10 +31,7 @@ class Attack:
         self.hit_targets.clear()
 
         surface = pygame.display.get_surface()
-        center = pygame.Vector2(
-            surface.get_width() // 2,
-            surface.get_height() // 2
-        )
+        center = pygame.Vector2(surface.get_width() // 2, surface.get_height() // 2)
 
         mx, my = pygame.mouse.get_pos()
         vec = pygame.Vector2(mx, my) - center
@@ -58,9 +54,7 @@ class Attack:
 
         distance = self.hit_range * (1 - (1 - t) ** 2) - 60
 
-        self.visual_pos = (
-            pygame.Vector2(player_pos) + self.direction * distance
-        )
+        self.visual_pos = pygame.Vector2(player_pos) + self.direction * distance
 
         self.hit_pos = self.visual_pos + self.direction * 60
 
@@ -75,10 +69,12 @@ class Attack:
         if not self.active or not self.has_hit:
             return False
 
+        if not target.can_be_damaged:
+            return False
+
         if target in self.hit_targets:
             return False
 
-        # Circle vs rectangle collision
         rect = target.hurtbox.rect
 
         closest_x = max(rect.left, min(self.hit_pos.x, rect.right))
@@ -87,7 +83,7 @@ class Attack:
         dx = self.hit_pos.x - closest_x
         dy = self.hit_pos.y - closest_y
 
-        if dx * dx + dy * dy <= self.hit_radius ** 2:
+        if dx * dx + dy * dy <= self.hit_radius**2:
             self.hit_targets.add(target)
             return True
 
@@ -95,10 +91,7 @@ class Attack:
 
     def map_size(self):
         min_radius, max_radius = 40, 100
-        self.hit_radius = max(
-            min_radius,
-            min(max_radius, self.hit_radius)
-        )
+        self.hit_radius = max(min_radius, min(max_radius, self.hit_radius))
 
         return round(1 + (self.hit_radius - min_radius) / 4)
 
@@ -108,13 +101,9 @@ class Attack:
 
         attack_surface = pygame.Surface((w, 200), pygame.SRCALPHA)
 
-        pygame.draw.ellipse(
-            attack_surface, self.color, (0, 0, w, h)
-        )
+        pygame.draw.ellipse(attack_surface, self.color, (0, 0, w, h))
 
-        pygame.draw.ellipse(
-            attack_surface, (0, 255, 0, 0), (0, w / 2, w, h)
-        )
+        pygame.draw.ellipse(attack_surface, (0, 255, 0, 0), (0, w / 2, w, h))
 
         rotated = pygame.transform.rotate(attack_surface, angle)
         rotated_rect = rotated.get_rect(center=(x, y))
@@ -127,7 +116,7 @@ class Attack:
 
         t = self.progress
 
-        curve = (t ** 2) * (1 - t)
+        curve = (t**2) * (1 - t)
         base = 1.3 * ((1 - t) ** 2)
 
         raw_scale = base + curve * self.map_size()
@@ -140,13 +129,7 @@ class Attack:
         # Use the position calculated by update()
         screen_pos = self.visual_pos - camera.offset
 
-        self.draw_cres(
-            surface,
-            t,
-            screen_pos,
-            size=size,
-            angle=self.base_angle
-        )
+        self.draw_cres(surface, t, screen_pos, size=size, angle=self.base_angle)
 
         if self.is_debug:
             debug_pos = self.hit_pos - camera.offset
@@ -156,5 +139,5 @@ class Attack:
                 (255, 0, 0),
                 (round(debug_pos.x), round(debug_pos.y)),
                 self.hit_radius,
-                2
+                2,
             )

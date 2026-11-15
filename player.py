@@ -63,6 +63,8 @@ class Player:
         self.attack = Attack()
         self.attack.is_debug = True
 
+        self.can_attack = True
+
     def set_npcs(self, npcs):
         self.npcs = npcs
 
@@ -235,24 +237,28 @@ class Player:
     def mouse_handler(self):
         mouse = pygame.mouse.get_pressed()
 
-        # Change attack type (ranged or melee)
+        # Change attack type
         if mouse[2] and not self.prev_mouse_right:
             self.pointer.ranged = not self.pointer.ranged
+
         self.prev_mouse_right = mouse[2]
 
-        # Acttack Logic
-        if mouse[0] and not self.prev_mouse_left:
+        # Attack only when permitted
+        if mouse[0] and not self.prev_mouse_left and self.can_attack:
+
             if self.pointer.ranged:
                 if self.pointer.direction.length_squared() > 0:
                     projectile = Projectile(
                         self.pos, self.pointer.direction, self.stats["speed"]
                     )
                     self.projectiles.append(projectile)
+
             else:
                 self.attack.start()
 
-        self.projectiles = [p for p in self.projectiles if p.alive]
         self.prev_mouse_left = mouse[0]
+
+        self.projectiles = [p for p in self.projectiles if p.alive]
 
     def update_projectiles(self, dt):
         for projectile in self.projectiles:

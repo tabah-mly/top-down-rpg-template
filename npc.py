@@ -79,6 +79,7 @@ class NPC:
         }[self.facing]
 
         self.player = None
+        self.can_be_damaged = False
 
     def update(self, dt):
         if self.movement == "path":

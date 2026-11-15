@@ -1,4 +1,3 @@
-
 import pygame
 
 
@@ -35,16 +34,18 @@ class Projectile:
         if not self.alive:
             return False
 
+        if not target.can_be_damaged:
+            return False
+
         rect = target.hurtbox.rect
 
-        # Find the closest point on the NPC hurtbox
         closest_x = max(rect.left, min(self.pos.x, rect.right))
         closest_y = max(rect.top, min(self.pos.y, rect.bottom))
 
         dx = self.pos.x - closest_x
         dy = self.pos.y - closest_y
 
-        return dx * dx + dy * dy <= self.radius ** 2
+        return dx * dx + dy * dy <= self.radius**2
 
     def draw(self, surface, camera):
         screen_pos = self.pos - camera.offset
@@ -53,7 +54,7 @@ class Projectile:
             surface,
             (255, 255, 255),
             (round(screen_pos.x), round(screen_pos.y)),
-            self.radius
+            self.radius,
         )
 
         # Debug collision radius
@@ -62,5 +63,5 @@ class Projectile:
             (255, 0, 0),
             (round(screen_pos.x), round(screen_pos.y)),
             self.radius,
-            1
+            1,
         )
