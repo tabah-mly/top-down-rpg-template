@@ -42,6 +42,9 @@ class Game:
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
 
+        for npc in self.npcs:
+            npc.set_player(self.player)
+
         self.dialog = DialogWindow(self.screen_width, self.screen_height, self.font_manager)
 
         interact_icon = pygame.image.load(
@@ -75,6 +78,9 @@ class Game:
         self.player.set_bounds(new_map.width, new_map.height)
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
+
+        for npc in self.npcs:
+            npc.set_player(self.player)
 
     def interact_with_npc(self):
         npc = self.get_nearby_npc()

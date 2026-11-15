@@ -78,6 +78,8 @@ class NPC:
             "right": pygame.Vector2(1, 0),
         }[self.facing]
 
+        self.player = None
+
     def update(self, dt):
         if self.movement == "path":
             self.update_path_movement(dt)
@@ -169,9 +171,9 @@ class NPC:
         direction = self.movement_direction * self.direction_sign
         movement = self.speed * dt
 
-        self.pos += direction * movement
-        self.rect.center = self.pos
-        self.update_collision_boxes()
+        if not self.move(direction * movement):
+            self.set_animation("idle")
+            return
 
         self.travelled += movement
 
@@ -229,9 +231,9 @@ class NPC:
 
         direction = direction.normalize()
 
-        self.pos += direction * movement
-        self.rect.center = self.pos
-        self.update_collision_boxes()
+        if not self.move(direction * movement):
+            self.set_animation("idle")
+            return
 
         # Determine facing direction
         if abs(direction.x) > abs(direction.y):
@@ -249,3 +251,29 @@ class NPC:
         self.body_collider.draw_debug(surface, camera, (0, 255, 0))
 
         self.hurtbox.draw_debug(surface, camera, (255, 0, 255))
+
+    def set_player(self, player):
+        self.player = player
+
+    def can_move_to(self, position):
+        if self.player is None:
+            return True
+
+        candidate = self.body_collider.rect.copy()
+
+        target_center = pygame.Vector2(position) + self.body_collider.offset
+        candidate.center = round(target_center.x), round(target_center.y)
+
+        return not candidate.colliderect(self.player.body_collider.rect)
+
+    def move(self, movement):
+        target_position = self.pos + movement
+
+        if not self.can_move_to(target_position):
+            return False
+
+        self.pos = target_position
+        self.rect.center = self.pos
+        self.update_collision_boxes()
+
+        return True
