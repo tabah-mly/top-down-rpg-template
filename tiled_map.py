@@ -5,6 +5,7 @@ from collision import CollisionShape
 from trigger import Trigger
 from npc import NPC
 from entity_database import EntityDatabase
+from enemy import Enemy
 
 
 class TiledMap:
@@ -240,6 +241,68 @@ class TiledMap:
             npcs.append(npc)
 
         return npcs
+
+
+    # ========================================================
+    # Load Enemies
+    # ========================================================
+
+    def load_enemies(self):
+        enemies = []
+        paths = self.load_npc_paths()
+
+        try:
+            layer = self.tmx.get_layer_by_name("Entities")
+        except ValueError:
+            return enemies
+
+        for obj in layer:
+            object_class = self.object_classes.get(obj.id, "")
+
+            if object_class != "EnemySpawn":
+                continue
+
+            entity_id = obj.properties.get("entity_id")
+
+            if not entity_id:
+                raise ValueError(
+                    f"Enemy spawn '{obj.name}' has no entity_id property!"
+                )
+
+            # Tiled properties override the JSON definition.
+            overrides = {
+                key: value
+                for key, value in obj.properties.items()
+                if key != "entity_id"
+            }
+
+            config = self.entity_database.get(
+                "enemy",
+                entity_id,
+                overrides
+            )
+
+            path_name = config.get("path", "")
+
+            if config.get("movement") == "path":
+                if path_name not in paths:
+                    raise ValueError(
+                        f"Enemy '{entity_id}' references "
+                        f"missing path '{path_name}'"
+                    )
+
+            enemy = Enemy(
+                x=obj.x * self.scale,
+                y=obj.y * self.scale,
+                name=obj.name or entity_id,
+                config=config,
+                path=paths.get(path_name, []),
+            )
+
+            enemies.append(enemy)
+
+        return enemies
+
 
     def load_npc_paths(self):
         paths = {}

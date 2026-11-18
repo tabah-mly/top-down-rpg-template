@@ -6,7 +6,8 @@ from player import Player
 from pointer import Pointer
 from tiled_map import TiledMap
 from dialog import DialogWindow
-from enemy import Enemy
+
+# from enemy import Enemy
 
 
 class Game:
@@ -33,6 +34,7 @@ class Game:
         self.triggers = self.tilemap.load_triggers()
         self.collisions = self.tilemap.load_collisions()
         self.npcs = self.tilemap.load_npcs()
+        self.enemies = self.tilemap.load_enemies()
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
 
@@ -43,20 +45,22 @@ class Game:
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
 
-        enemy_config = self.tilemap.entity_database.get("enemy", "skeleton")
+        # enemy_config = self.tilemap.entity_database.get("enemy", "skeleton")
 
-        self.enemies = [
-            Enemy(900, 300, "Skeleton", enemy_config)
-        ]
+        # self.enemies = [
+        #     Enemy(900, 300, "Skeleton", enemy_config)
+        # ]
+
+        for npc in self.npcs:
+            npc.set_player(self.player)
 
         for enemy in self.enemies:
             enemy.set_player(self.player)
             enemy.set_collisions(self.collisions)
 
-        for npc in self.npcs:
-            npc.set_player(self.player)
-
-        self.dialog = DialogWindow(self.screen_width, self.screen_height, self.font_manager)
+        self.dialog = DialogWindow(
+            self.screen_width, self.screen_height, self.font_manager
+        )
 
         interact_icon = pygame.image.load(
             "assets/imgs/system/interact.png"
@@ -78,6 +82,7 @@ class Game:
         self.triggers = self.tilemap.load_triggers()
         self.collisions = new_map.load_collisions()
         self.npcs = self.tilemap.load_npcs()
+        self.enemies = self.tilemap.load_enemies()
 
         self.camera.set_bounds(new_map.width, new_map.height)
 
@@ -92,6 +97,10 @@ class Game:
 
         for npc in self.npcs:
             npc.set_player(self.player)
+
+        for enemy in self.enemies:
+            enemy.set_player(self.player)
+            enemy.set_collisions(self.collisions)
 
     def interact_with_npc(self):
         npc = self.get_nearby_npc()
@@ -168,7 +177,7 @@ class Game:
                 self.camera,
                 interact_icon=(self.interact_icon if npc == nearby_npc else None),
             )
-        
+
         for enemy in self.enemies:
             enemy.draw(self.screen, self.camera)
 
