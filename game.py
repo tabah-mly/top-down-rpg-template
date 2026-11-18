@@ -6,6 +6,7 @@ from player import Player
 from pointer import Pointer
 from tiled_map import TiledMap
 from dialog import DialogWindow
+from enemy import Enemy
 
 
 class Game:
@@ -41,6 +42,16 @@ class Game:
         self.player.set_bounds(self.tilemap.width, self.tilemap.height)
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
+
+        enemy_config = self.tilemap.entity_database.get("enemy", "skeleton")
+
+        self.enemies = [
+            Enemy(900, 300, "Skeleton", enemy_config)
+        ]
+
+        for enemy in self.enemies:
+            enemy.set_player(self.player)
+            enemy.set_collisions(self.collisions)
 
         for npc in self.npcs:
             npc.set_player(self.player)
@@ -128,6 +139,9 @@ class Game:
         for npc in self.npcs:
             npc.update(dt)
 
+        for enemy in self.enemies:
+            enemy.update(dt)
+
         for trigger in self.triggers:
             if trigger.update(self.player.body_collider.rect):
                 if trigger.action == "print":
@@ -154,6 +168,12 @@ class Game:
                 self.camera,
                 interact_icon=(self.interact_icon if npc == nearby_npc else None),
             )
+        
+        for enemy in self.enemies:
+            enemy.draw(self.screen, self.camera)
+
+            if self.debug_collisions and enemy.is_debug:
+                enemy.draw_collision_debug(self.screen, self.camera)
 
         self.player.draw(self.screen, self.camera)
 
