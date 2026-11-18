@@ -4,7 +4,7 @@
 
         "frame_width": 32,
         "frame_height": 32,
-        "sprite_scale": 2,
+        "sprite_scale": 3,
         "animation_speed": 0.1,
 
         "max_hp": 200,
@@ -14,6 +14,18 @@
         "movement": "patrol",
         "patrol_direction": "up",
         "patrol_distance": 64,
-        "pause_duration": 1.5
+        "pause_duration": 1.5,
+
+        "body_collider": {
+            "width": 36,
+            "height": 24,
+            "offset": [0, 25]
+        },
+
+        "hurtbox": {
+            "width": 45,
+            "height": 63,
+            "offset": [0, 10]
+        }
     }
 }
