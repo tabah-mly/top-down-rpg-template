@@ -256,6 +256,10 @@ class Game:
     def update(self, dt):
         if self.state == "opening":
             self.opening.update(dt)
+            
+            if self.opening.finished:
+                self.start_new_game()
+
             return
 
         if self.state != "playing":
