@@ -1,0 +1,36 @@
+{
+    "village_merchant": [
+        {
+            "dialogue_id": "merchant_intro",
+            "conditions": []
+        }
+    ],
+    "christopher": [
+        {
+            "dialogue_id": "christopher_after_shelter",
+            "conditions": [
+                {
+                    "type": "quest_active",
+                    "quest_id": "survive_the_forest",
+                    "objective_id": "meet_the_elf"
+                }
+            ]
+        },
+        {
+            "dialogue_id": "christopher_intro",
+            "conditions": []
+        }
+    ],
+    "dansi_2": [
+        {
+            "dialogue_id": "dansi_2_intro",
+            "conditions": []
+        }
+    ],
+    "leonhard": [
+        {
+            "dialogue_id": "leonhard_intro",
+            "conditions": []
+        }
+    ]
+}

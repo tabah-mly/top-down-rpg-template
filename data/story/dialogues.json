@@ -27,5 +27,13 @@
         "lines": [
             "..."
         ]
+    },
+    "christopher_after_shelter": {
+        "speaker": "Christopher",
+        "lines": [
+            "Ah, there you are.",
+            "I heard you managed to find a safe place.",
+            "Be careful out there. The forest isn't as peaceful as it looks."
+        ]
     }
 }

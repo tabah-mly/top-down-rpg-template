@@ -13,6 +13,7 @@ from story_database import StoryDatabase
 from event_manager import EventManager
 from quest_manager import QuestManager
 from quest_database import QuestDatabase
+from dialogue_manager import DialogueManager
 
 
 class Game:
@@ -39,6 +40,9 @@ class Game:
         )
 
         self.dialogue_database = DialogueDatabase()
+        self.dialogue_manager = DialogueManager(self.dialogue_database)
+
+        self.active_dialogue_context = None
         self.story_database = StoryDatabase()
         self.event_manager = EventManager()
 
@@ -133,6 +137,7 @@ class Game:
             npc.set_player(self.player)
 
         self.dialog.active = False
+        self.active_dialogue_context = None
 
         self.quest_manager.reset()
 
@@ -203,18 +208,25 @@ class Game:
         if not npc:
             return
 
+        dialogue = self.dialogue_manager.get_dialogue(
+            npc,
+            self.quest_manager,
+        )
+
+        if not dialogue:
+            return
+
         self.event_manager.emit(
             "npc_interacted",
             target=npc.entity_id,
         )
 
-        if not npc.dialogue_id:
-            return
+        self.active_dialogue_context = {
+            "npc_id": npc.entity_id,
+            "dialogue_id": dialogue["id"],
+        }
 
-        dialogue = self.dialogue_database.get(npc.dialogue_id)
-
-        if dialogue:
-            self.dialog.open(dialogue)
+        self.dialog.open(dialogue["content"])
 
     def get_nearby_npc(self):
         nearby_npcs = [npc for npc in self.npcs if npc.can_interact(self.player.rect)]
@@ -260,10 +272,31 @@ class Game:
 
             if self.dialog.active:
                 if event.key in (pygame.K_SPACE, pygame.K_RETURN):
+                    was_active = self.dialog.active
+
                     self.dialog.advance()
+
+                    if was_active and not self.dialog.active:
+                        self.on_dialogue_completed()
 
             elif event.key == pygame.K_e:
                 self.interact_with_npc()
+
+    def on_dialogue_completed(self):
+        context = self.active_dialogue_context
+
+        if not context:
+            return
+
+        self.event_manager.emit(
+            "dialogue_completed",
+            target=context["npc_id"],
+            dialogue_id=context["dialogue_id"],
+        )
+
+        print(f"[DIALOGUE] Completed: " f"{context['dialogue_id']}")
+
+        self.active_dialogue_context = None
 
     # ========================================================
     # GAMEPLAY
@@ -308,10 +341,7 @@ class Game:
                     )
 
                 if trigger.action == "print":
-                    print(
-                        f"[TRIGGER] {trigger.name}: "
-                        f"{trigger.message}"
-                    )
+                    print(f"[TRIGGER] {trigger.name}: " f"{trigger.message}")
 
                 if trigger.action == "transition":
                     self.change_map(
