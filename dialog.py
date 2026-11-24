@@ -23,8 +23,8 @@ class DialogWindow:
         self.y = screen_height - self.height - 32
 
         self.font_manager = font_manager
-        self.font = self.font_manager.get("main", 22)
-        self.prompt_font = self.font_manager.get("main", 20)
+        self.font = self.font_manager.get("main", 28)
+        self.prompt_font = self.font_manager.get("main", 18)
 
         # self.font = pygame.font.Font(None, 30)
         # self.prompt_font = pygame.font.Font(None, 22)
@@ -102,7 +102,7 @@ class DialogWindow:
                 ),
             )
 
-        prompt = self.prompt_font.render("SPACE / ENTER  >", True, (210, 210, 220))
+        prompt = self.prompt_font.render("SPACE/ENTER  ", True, (210, 210, 220))
 
         prompt_rect = prompt.get_rect(
             bottomright=(self.x + self.width - 42, self.y + self.height - 20)
