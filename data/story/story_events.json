@@ -1,0 +1,25 @@
+{
+    "events": [
+        {
+            "flag": "met_christopher",
+            "event": "npc_interacted",
+            "conditions": {
+                "target": "christopher"
+            }
+        },
+        {
+            "flag": "found_forest_clearing",
+            "event": "location_entered",
+            "conditions": {
+                "target": "forest_clearing"
+            }
+        },
+        {
+            "flag": "completed_survive_the_forest",
+            "event": "quest_completed",
+            "conditions": {
+                "quest_id": "survive_the_forest"
+            }
+        }
+    ]
+}

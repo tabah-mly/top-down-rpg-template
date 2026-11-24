@@ -14,6 +14,7 @@ from event_manager import EventManager
 from quest_manager import QuestManager
 from quest_database import QuestDatabase
 from dialogue_manager import DialogueManager
+from story_state import StoryState
 
 
 class Game:
@@ -45,6 +46,7 @@ class Game:
         self.active_dialogue_context = None
         self.story_database = StoryDatabase()
         self.event_manager = EventManager()
+        self.story_state = StoryState(self.event_manager)
 
         self.quest_database = QuestDatabase()
 
@@ -140,6 +142,7 @@ class Game:
         self.active_dialogue_context = None
 
         self.quest_manager.reset()
+        self.story_state.reset()
 
         self.quest_manager.start_quest("survive_the_forest")
         self.state = "playing"
@@ -211,6 +214,7 @@ class Game:
         dialogue = self.dialogue_manager.get_dialogue(
             npc,
             self.quest_manager,
+            self.story_state,
         )
 
         if not dialogue:

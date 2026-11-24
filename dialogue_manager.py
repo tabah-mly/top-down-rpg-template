@@ -15,14 +15,14 @@ class DialogueManager:
         with open(path, "r", encoding="utf-8") as file:
             self.routes = json.load(file)
 
-    def get_dialogue(self, npc, quest_manager):
+    def get_dialogue(self, npc, quest_manager, story_state):
         rules = self.routes.get(npc.entity_id, [])
 
         # First matching rule wins.
         for rule in rules:
             conditions = rule.get("conditions", [])
 
-            if self.conditions_met(conditions, quest_manager):
+            if self.conditions_met(conditions, quest_manager, story_state):
                 dialogue_id = rule["dialogue_id"]
 
                 return {
@@ -44,7 +44,7 @@ class DialogueManager:
 
         return None
 
-    def conditions_met(self, conditions, quest_manager):
+    def conditions_met(self, conditions, quest_manager, story_state):
         # Every condition in a rule must pass (AND logic).
         for condition in conditions:
             condition_type = condition.get("type")
@@ -70,7 +70,16 @@ class DialogueManager:
                 if quest_id not in quest_manager.completed_quests:
                     return False
 
+            elif condition_type == "story_flag":
+                flag = condition.get("flag")
+                expected_value = condition.get("value", True)
+
+                if story_state.has_flag(flag) != expected_value:
+                    return False
+
             else:
-                raise ValueError(f"Unknown dialogue condition: '{condition_type}'")
+                raise ValueError(
+                    f"Unknown dialogue condition: '{condition_type}'"
+                )
 
         return True

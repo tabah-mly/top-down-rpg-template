@@ -35,5 +35,21 @@
             "I heard you managed to find a safe place.",
             "Be careful out there. The forest isn't as peaceful as it looks."
         ]
+    },
+    "christopher_after_meeting": {
+        "speaker": "Christopher",
+        "lines": [
+            "Ah, there you are.",
+            "I see you've come back.",
+            "Is there something you need?"
+        ]
+    },
+    "christopher_knows_about_curse": {
+        "speaker": "Christopher",
+        "lines": [
+            "Wait... you know about the curse?",
+            "There are things about your past that you don't understand.",
+            "Perhaps it's time I told you the truth."
+        ]
     }
 }

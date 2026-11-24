@@ -7,12 +7,32 @@
     ],
     "christopher": [
         {
+            "dialogue_id": "christopher_knows_about_curse",
+            "conditions": [
+                {
+                    "type": "story_flag",
+                    "flag": "knows_about_curse",
+                    "value": true
+                }
+            ]
+        },
+        {
             "dialogue_id": "christopher_after_shelter",
             "conditions": [
                 {
                     "type": "quest_active",
                     "quest_id": "survive_the_forest",
                     "objective_id": "meet_the_elf"
+                }
+            ]
+        },
+        {
+            "dialogue_id": "christopher_after_meeting",
+            "conditions": [
+                {
+                    "type": "story_flag",
+                    "flag": "met_christopher",
+                    "value": true
                 }
             ]
         },
