@@ -1,6 +1,6 @@
 import pygame
 import sys
-
+from opening import OpeningSequence
 from camera import Camera
 from font_manager import FontManager
 from player import Player
@@ -54,6 +54,12 @@ class Game:
 
         # Application state
         self.state = "menu"
+
+        self.opening = OpeningSequence(
+            self.screen_width,
+            self.screen_height,
+            self.font_manager,
+        )
 
         self.main_menu = MainMenu(
             self.screen_width,
@@ -115,10 +121,10 @@ class Game:
 
     def handle_menu_action(self, action):
         if action == "new_game":
-            self.start_new_game()
+            self.opening.reset()
+            self.state = "opening"
 
         elif action == "continue":
-            # Save/load functionality will be implemented later.
             pass
 
         elif action == "exit":
@@ -201,7 +207,13 @@ class Game:
                 self.running = False
                 continue
 
-            if self.state == "menu":
+            if self.state == "opening":
+                finished = self.opening.handle_event(event)
+
+                if finished:
+                    self.start_new_game()
+
+            elif self.state == "menu":
                 action = self.main_menu.handle_event(event)
 
                 if action:
@@ -232,6 +244,10 @@ class Game:
         return min(dt, 0.05)
 
     def update(self, dt):
+        if self.state == "opening":
+            self.opening.update(dt)
+            return
+
         if self.state != "playing":
             return
 
@@ -266,7 +282,10 @@ class Game:
     # ========================================================
 
     def draw(self):
-        if self.state == "menu":
+        if self.state == "opening":
+            self.opening.draw(self.screen)
+
+        elif self.state == "menu":
             self.main_menu.draw(self.screen)
 
         elif self.state == "playing":
