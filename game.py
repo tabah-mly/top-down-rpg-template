@@ -9,6 +9,7 @@ from tiled_map import TiledMap
 from dialog import DialogWindow
 from main_menu import MainMenu
 from dialogue_database import DialogueDatabase
+from story_database import StoryDatabase
 
 
 class Game:
@@ -35,6 +36,7 @@ class Game:
         )
 
         self.dialogue_database = DialogueDatabase()
+        self.story_database = StoryDatabase()
 
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
@@ -55,10 +57,13 @@ class Game:
         # Application state
         self.state = "menu"
 
+        prologue = self.story_database.get_prologue("main_prologue")
+
         self.opening = OpeningSequence(
             self.screen_width,
             self.screen_height,
             self.font_manager,
+            prologue,
         )
 
         self.main_menu = MainMenu(

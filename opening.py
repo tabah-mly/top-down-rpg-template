@@ -2,7 +2,7 @@ import pygame
 
 
 class OpeningSequence:
-    def __init__(self, screen_width, screen_height, font_manager):
+    def __init__(self, screen_width, screen_height, font_manager, prologue):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.font_manager = font_manager
@@ -10,14 +10,8 @@ class OpeningSequence:
         self.font = self.font_manager.get("main", 28)
         self.prompt_font = self.font_manager.get("main", 18)
 
-        # Replace these with your actual story later.
-        self.pages = [
-            "Long before the kingdoms fell, the world lived in peace.",
-            "Ancient powers watched over the lands, protecting all living things.",
-            "But as time passed, mankind began to forget the old stories.",
-            "And deep beneath the earth, something began to awaken...",
-            "This is where our story begins.",
-        ]
+        self.title = prologue.get("title", "")
+        self.pages = prologue["pages"]
 
         self.current_page = 0
 
