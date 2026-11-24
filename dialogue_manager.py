@@ -6,10 +6,17 @@ class DialogueManager:
     def __init__(self, dialogue_database):
         self.dialogue_database = dialogue_database
         self.routes = {}
+        self.seen_dialogues = set()
 
         data_path = Path(__file__).parent / "data" / "story" / "npc_dialogues.json"
 
         self.load(data_path)
+
+    def mark_as_seen(self, dialogue_id):
+        self.seen_dialogues.add(dialogue_id)
+
+    def has_seen(self, dialogue_id):
+        return dialogue_id in self.seen_dialogues
 
     def load(self, path):
         with open(path, "r", encoding="utf-8") as file:
@@ -22,7 +29,9 @@ class DialogueManager:
         for rule in rules:
             conditions = rule.get("conditions", [])
 
-            if self.conditions_met(conditions, quest_manager, story_state):
+            if self.conditions_met(
+                conditions, quest_manager, story_state, rule["dialogue_id"]
+            ):
                 dialogue_id = rule["dialogue_id"]
 
                 return {
@@ -44,7 +53,7 @@ class DialogueManager:
 
         return None
 
-    def conditions_met(self, conditions, quest_manager, story_state):
+    def conditions_met(self, conditions, quest_manager, story_state ,dialogue_id):
         # Every condition in a rule must pass (AND logic).
         for condition in conditions:
             condition_type = condition.get("type")
@@ -77,9 +86,11 @@ class DialogueManager:
                 if story_state.has_flag(flag) != expected_value:
                     return False
 
+            elif condition_type == "dialogue_not_seen":
+                if self.has_seen(dialogue_id):
+                    return False
+
             else:
-                raise ValueError(
-                    f"Unknown dialogue condition: '{condition_type}'"
-                )
+                raise ValueError(f"Unknown dialogue condition: '{condition_type}'")
 
         return True

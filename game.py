@@ -143,6 +143,7 @@ class Game:
 
         self.quest_manager.reset()
         self.story_state.reset()
+        self.dialogue_manager.seen_dialogues.clear()
 
         self.quest_manager.start_quest("survive_the_forest")
         self.state = "playing"
@@ -297,6 +298,7 @@ class Game:
             target=context["npc_id"],
             dialogue_id=context["dialogue_id"],
         )
+        self.dialogue_manager.mark_as_seen(context["dialogue_id"])
 
         print(f"[DIALOGUE] Completed: " f"{context['dialogue_id']}")
 

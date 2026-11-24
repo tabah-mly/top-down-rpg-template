@@ -51,5 +51,12 @@
             "There are things about your past that you don't understand.",
             "Perhaps it's time I told you the truth."
         ]
+    },
+    "christopher_repeat": {
+        "speaker": "Christopher",
+        "lines": [
+            "Is there anything else you need?",
+            "Take care of yourself out there."
+        ]
     }
 }
