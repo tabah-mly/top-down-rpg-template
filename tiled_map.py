@@ -1,3 +1,4 @@
+from pathlib import Path
 import pygame
 import pytmx
 import xml.etree.ElementTree as ET
@@ -6,6 +7,7 @@ from trigger import Trigger
 from npc import NPC
 from entity_database import EntityDatabase
 from enemy import Enemy
+from trigger_database import TriggerDatabase
 
 
 class TiledMap:
@@ -37,6 +39,9 @@ class TiledMap:
             int(obj.get("id")): obj.get("class", obj.get("type", ""))
             for obj in root.findall(".//object")
         }
+
+        self.trigger_database = TriggerDatabase()
+        self.map_id = Path(filename).stem
 
     # ========================================================
     # Draw Map
@@ -89,23 +94,37 @@ class TiledMap:
         except ValueError:
             return triggers
 
+        map_triggers = self.trigger_database.get_map_triggers(
+            self.map_id
+        )
+
         for obj in layer:
+            trigger_name = obj.name or ""
+
+            config = self.trigger_database.get(
+                self.map_id,
+                trigger_name,
+            )
+
+            if config is None:
+                print(
+                    f"[TRIGGER] No configuration found for "
+                    f"'{trigger_name}' in map '{self.map_id}'"
+                )
+                config = {}
+
             shape = self.load_object_shape(obj)
 
             trigger = Trigger(
                 shape=shape,
-                name=obj.name or "",
-                event=obj.properties.get("event", "enter"),
-                action=obj.properties.get("action", "print"),
-                message=obj.properties.get("message", ""),
-                once=obj.properties.get("once", False),
-                target_map=obj.properties.get("target_map"),
-                target_spawn=obj.properties.get("target_spawn"),
+                name=trigger_name,
+                config=config,
             )
 
             triggers.append(trigger)
 
         return triggers
+
 
     # ========================================================
     # Load Collisions
@@ -236,6 +255,7 @@ class TiledMap:
                 can_be_damaged=config.get("can_be_damaged", False),
                 max_hp=int(config.get("max_hp", 100)),
                 interact_range=float(config.get("interact_range", 48)) * self.scale,
+                entity_id=entity_id,
             )
 
             npcs.append(npc)

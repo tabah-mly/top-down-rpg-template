@@ -10,6 +10,9 @@ from dialog import DialogWindow
 from main_menu import MainMenu
 from dialogue_database import DialogueDatabase
 from story_database import StoryDatabase
+from event_manager import EventManager
+from quest_manager import QuestManager
+from quest_database import QuestDatabase
 
 
 class Game:
@@ -37,6 +40,14 @@ class Game:
 
         self.dialogue_database = DialogueDatabase()
         self.story_database = StoryDatabase()
+        self.event_manager = EventManager()
+
+        self.quest_database = QuestDatabase()
+
+        self.quest_manager = QuestManager(
+            self.quest_database,
+            self.event_manager,
+        )
 
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
@@ -122,6 +133,10 @@ class Game:
             npc.set_player(self.player)
 
         self.dialog.active = False
+
+        self.quest_manager.reset()
+
+        self.quest_manager.start_quest("survive_the_forest")
         self.state = "playing"
 
     def handle_menu_action(self, action):
@@ -185,7 +200,15 @@ class Game:
     def interact_with_npc(self):
         npc = self.get_nearby_npc()
 
-        if not npc or not npc.dialogue_id:
+        if not npc:
+            return
+
+        self.event_manager.emit(
+            "npc_interacted",
+            target=npc.entity_id,
+        )
+
+        if not npc.dialogue_id:
             return
 
         dialogue = self.dialogue_database.get(npc.dialogue_id)
@@ -256,7 +279,7 @@ class Game:
     def update(self, dt):
         if self.state == "opening":
             self.opening.update(dt)
-            
+
             if self.opening.finished:
                 self.start_new_game()
 
@@ -277,8 +300,18 @@ class Game:
         for trigger in self.triggers:
             if trigger.update(self.player.body_collider.rect):
 
+                # Notify the quest system
+                if trigger.quest_event:
+                    self.event_manager.emit(
+                        trigger.quest_event,
+                        target=trigger.quest_target,
+                    )
+
                 if trigger.action == "print":
-                    print(f"[TRIGGER] {trigger.name}: " f"{trigger.message}")
+                    print(
+                        f"[TRIGGER] {trigger.name}: "
+                        f"{trigger.message}"
+                    )
 
                 if trigger.action == "transition":
                     self.change_map(

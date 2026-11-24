@@ -1,25 +1,21 @@
 class Trigger:
-    def __init__(
-        self,
-        shape,
-        name="",
-        event="enter",
-        action="print",
-        message="",
-        once=False,
-        target_map=None,
-        target_spawn=None,
-    ):
+    def __init__(self, shape, name, config=None):
+        config = config or {}
+
         self.shape = shape
-
         self.name = name
-        self.event = event
-        self.action = action
-        self.message = message
-        self.once = once
 
-        self.target_map = target_map
-        self.target_spawn = target_spawn
+        self.event = config.get("event", "enter")
+        self.action = config.get("action", "print")
+        self.message = config.get("message", "")
+        self.once = config.get("once", False)
+
+        self.target_map = config.get("target_map")
+        self.target_spawn = config.get("target_spawn")
+
+        # Quest integration
+        self.quest_event = config.get("quest_event")
+        self.quest_target = config.get("quest_target", name)
 
         self.inside = False
         self.activated = False
@@ -50,4 +46,8 @@ class Trigger:
         return activated
 
     def draw_debug(self, surface, camera):
-        self.shape.draw_debug(surface, camera, color=(255, 200, 0))
+        self.shape.draw_debug(
+            surface,
+            camera,
+            color=(255, 200, 0),
+        )

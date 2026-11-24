@@ -1,0 +1,40 @@
+{
+    "survive_the_forest": {
+        "id": "survive_the_forest",
+        "title": "Survive the Forest",
+        "description": "Find a way to survive in the forest.",
+        "objectives": [
+            {
+                "id": "find_shelter",
+                "description": "Find shelter in the forest.",
+                "event": "location_entered",
+                "target": "forest_clearing"
+            },
+            {
+                "id": "meet_the_elf",
+                "description": "Meet the person who rescued you.",
+                "event": "npc_interacted",
+                "target": "forest_elf"
+            }
+        ]
+    },
+    "find_favorite_food": {
+        "id": "find_favorite_food",
+        "title": "A Meal to Remember",
+        "description": "Find the elf's favorite food.",
+        "objectives": [
+            {
+                "id": "find_ingredient",
+                "description": "Find the required ingredient.",
+                "event": "item_collected",
+                "target": "special_ingredient"
+            },
+            {
+                "id": "return_to_elf",
+                "description": "Return to the elf.",
+                "event": "npc_interacted",
+                "target": "forest_elf"
+            }
+        ]
+    }
+}

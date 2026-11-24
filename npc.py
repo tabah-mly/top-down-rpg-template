@@ -23,10 +23,12 @@ class NPC:
         can_be_damaged=False,
         max_hp=100,
         interact_range=48,
+        entity_id=None,
     ):
         self.name = name
         self.sprite = sprite
         self.dialogue_id = dialogue_id
+        self.entity_id = entity_id or name
 
         self.animations = {}
 

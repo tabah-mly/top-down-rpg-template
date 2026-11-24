@@ -1,0 +1,19 @@
+{
+    "level0": {
+        "forest_clearing": {
+            "event": "enter",
+            "action": "print",
+            "message": "Player entered the forest clearing.",
+            "once": true,
+            "quest_event": "location_entered",
+            "quest_target": "forest_clearing"
+        },
+        "forest_exit": {
+            "event": "enter",
+            "action": "transition",
+            "target_map": "assets/maps/level1.tmx",
+            "target_spawn": "forest_entrance",
+            "once": true
+        }
+    }
+}
