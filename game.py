@@ -8,6 +8,7 @@ from pointer import Pointer
 from tiled_map import TiledMap
 from dialog import DialogWindow
 from main_menu import MainMenu
+from dialogue_database import DialogueDatabase
 
 
 class Game:
@@ -33,6 +34,8 @@ class Game:
             "assets/fonts/PixelifySans-Regular.ttf",
         )
 
+        self.dialogue_database = DialogueDatabase()
+
         self.pointer = Pointer()
         self.camera = Camera(self.screen_width, self.screen_height)
 
@@ -47,10 +50,7 @@ class Game:
             "assets/imgs/system/interact.png"
         ).convert_alpha()
 
-        self.interact_icon = pygame.transform.scale_by(
-            interact_icon,
-            2,
-        )
+        self.interact_icon = pygame.transform.scale_by(interact_icon, 2)
 
         # Application state
         self.state = "menu"
@@ -180,8 +180,13 @@ class Game:
     def interact_with_npc(self):
         npc = self.get_nearby_npc()
 
-        if npc and npc.dialogue:
-            self.dialog.open(npc.dialogue)
+        if not npc or not npc.dialogue_id:
+            return
+
+        dialogue = self.dialogue_database.get(npc.dialogue_id)
+
+        if dialogue:
+            self.dialog.open(dialogue)
 
     def get_nearby_npc(self):
         nearby_npcs = [npc for npc in self.npcs if npc.can_interact(self.player.rect)]

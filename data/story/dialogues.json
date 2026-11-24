@@ -1,0 +1,31 @@
+{
+    "merchant_intro": {
+        "speaker": "Village Merchant",
+        "lines": [
+            "Welcome, traveler!",
+            "Looking for something special?",
+            "I've got plenty of goods to offer."
+        ]
+    },
+    "christopher_intro": {
+        "speaker": "Christopher",
+        "lines": [
+            "Oh, hello there.",
+            "The village has been unusually quiet lately.",
+            "Something doesn't feel right..."
+        ]
+    },
+    "dansi_2_intro": {
+        "speaker": "Dansi",
+        "lines": [
+            "Good day!",
+            "It's a beautiful day, isn't it?"
+        ]
+    },
+    "leonhard_intro": {
+        "speaker": "Leonhard",
+        "lines": [
+            "..."
+        ]
+    }
+}

@@ -227,7 +227,7 @@ class TiledMap:
                 name=obj.name or entity_id,
                 sprite=sprite,
                 direction=config.get("direction", "down"),
-                dialogue=config.get("dialogue", ""),
+                dialogue_id=config.get("dialogue_id"),
                 movement=config.get("movement", "static"),
                 speed=float(config.get("speed", 60)),
                 patrol_distance=float(config.get("patrol_distance", 64)) * self.scale,

@@ -2,7 +2,7 @@
     "village_merchant": {
         "sprite": "dansi_5",
         "direction": "down",
-        "dialogue": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Assumenda sint velit culpa quidem quas sunt officia quod est nostrud culpa. Est deleniti ducimus nulla anim sed sed lorem voluptas. Sint dolor laborum velit minus elit eu eu dolore atque voluptatum. Eum irure laborum sunt quidem nam et eos nobis in omnis.",
+        "dialogue_id": "merchant_intro",
         "movement": "path",
         "speed": 60,
         "patrol_distance": 64,
@@ -15,7 +15,7 @@
     "christopher": {
         "sprite": "christopher",
         "direction": "down",
-        "dialogue": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Assumenda sint velit culpa quidem quas sunt officia quod est nostrud culpa. Est deleniti ducimus nulla anim sed sed lorem voluptas. Sint dolor laborum velit minus elit eu eu dolore atque voluptatum. Eum irure laborum sunt quidem nam et eos nobis in omnis.",
+        "dialogue_id": "christopher_intro",
         "movement": "patrol",
         "speed": 60,
         "patrol_distance": 64,
@@ -28,7 +28,7 @@
     "dansi_2": {
         "sprite": "dansi_2",
         "direction": "down",
-        "dialogue": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Assumenda sint velit culpa quidem quas sunt officia quod est nostrud culpa. Est deleniti ducimus nulla anim sed sed lorem voluptas. Sint dolor laborum velit minus elit eu eu dolore atque voluptatum. Eum irure laborum sunt quidem nam et eos nobis in omnis.",
+        "dialogue_id": "dansi_2_intro",
         "movement": "static",
         "speed": 60,
         "patrol_distance": 64,
@@ -41,7 +41,7 @@
     "leonhard": {
         "sprite": "leonhard",
         "direction": "left",
-        "dialogue": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Assumenda sint velit culpa quidem quas sunt officia quod est nostrud culpa. Est deleniti ducimus nulla anim sed sed lorem voluptas. Sint dolor laborum velit minus elit eu eu dolore atque voluptatum. Eum irure laborum sunt quidem nam et eos nobis in omnis.",
+        "dialogue_id": "leonhard_intro",
         "movement": "patrol",
         "speed": 60,
         "patrol_distance": 64,

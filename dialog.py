@@ -24,21 +24,23 @@ class DialogWindow:
 
         self.font_manager = font_manager
         self.font = self.font_manager.get("main", 28)
+        self.speaker_font = self.font_manager.get("main", 22)
         self.prompt_font = self.font_manager.get("main", 18)
 
         # self.font = pygame.font.Font(None, 30)
         # self.prompt_font = pygame.font.Font(None, 22)
 
         self.active = False
+        self.speaker = ""
         self.pages = []
         self.current_page = 0
 
         self.text_margin_x = 48
-        self.text_margin_y = 35
+        self.text_margin_y = 58
         self.max_text_width = self.width - self.text_margin_x * 2
 
         self.line_height = 32
-        self.max_lines = 3
+        self.max_lines = 2
 
     def wrap_text(self, text):
         words = text.split()
@@ -60,18 +62,30 @@ class DialogWindow:
 
         return lines
 
-    def open(self, message):
-        lines = self.wrap_text(message)
+    def open(self, dialogue):
+        # Support both structured dialogue and plain trigger messages.
+        if isinstance(dialogue, dict):
+            self.speaker = dialogue.get("speaker", "")
+            dialogue_lines = dialogue.get("lines", [])
+        else:
+            self.speaker = ""
+            dialogue_lines = [str(dialogue)]
 
-        self.pages = [
-            lines[i : i + self.max_lines] for i in range(0, len(lines), self.max_lines)
-        ]
+        self.pages = []
 
-        if not self.pages:
-            self.pages = [[]]
+        for dialogue_line in dialogue_lines:
+            wrapped_lines = self.wrap_text(dialogue_line)
+
+            # Each dialogue entry gets its own progression.
+            chunks = [
+                wrapped_lines[i:i + self.max_lines]
+                for i in range(0, len(wrapped_lines), self.max_lines)
+            ]
+
+            self.pages.extend(chunks)
 
         self.current_page = 0
-        self.active = True
+        self.active = bool(self.pages)
 
     def advance(self):
         if not self.active:
@@ -88,11 +102,31 @@ class DialogWindow:
 
         surface.blit(self.image, (self.x, self.y))
 
+        # Speaker name
+        if self.speaker:
+            speaker_surface = self.speaker_font.render(
+                self.speaker,
+                False,
+                (255, 220, 120),
+            )
+
+            surface.blit(
+                speaker_surface,
+                (
+                    self.x + self.text_margin_x,
+                    self.y + 22,
+                ),
+            )
+
+        # Dialogue text
         lines = self.pages[self.current_page]
 
         for i, line in enumerate(lines):
-            # text_surface = self.font.render(line, True, (255, 255, 255))
-            text_surface = self.font.render(line, False, (255, 255, 255))
+            text_surface = self.font.render(
+                line,
+                False,
+                (255, 255, 255),
+            )
 
             surface.blit(
                 text_surface,
@@ -102,10 +136,18 @@ class DialogWindow:
                 ),
             )
 
-        prompt = self.prompt_font.render("SPACE/ENTER  ", True, (210, 210, 220))
+        # Continue prompt
+        prompt = self.prompt_font.render(
+            "SPACE/ENTER",
+            True,
+            (210, 210, 220),
+        )
 
         prompt_rect = prompt.get_rect(
-            bottomright=(self.x + self.width - 42, self.y + self.height - 20)
+            bottomright=(
+                self.x + self.width - 42,
+                self.y + self.height - 20,
+            )
         )
 
         surface.blit(prompt, prompt_rect)

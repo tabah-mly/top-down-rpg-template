@@ -14,7 +14,7 @@ class NPC:
         name,
         sprite,
         direction="down",
-        dialogue="",
+        dialogue_id=None,
         movement="static",
         speed=60,
         patrol_distance=64,
@@ -26,7 +26,7 @@ class NPC:
     ):
         self.name = name
         self.sprite = sprite
-        self.dialogue = dialogue
+        self.dialogue_id = dialogue_id
 
         self.animations = {}
 
