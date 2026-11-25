@@ -1,5 +1,9 @@
 import pygame
 import sys
+import json
+import random
+import math
+from pathlib import Path
 from opening import OpeningSequence
 from camera import Camera
 from font_manager import FontManager
@@ -15,6 +19,7 @@ from quest_manager import QuestManager
 from quest_database import QuestDatabase
 from dialogue_manager import DialogueManager
 from story_state import StoryState
+from enemy import Enemy
 
 
 class Game:
@@ -116,6 +121,13 @@ class Game:
         self.current_map_path = None
         self.ritual_rect = None
 
+        # Wave-driven mission state. Mission rules live in data/missions/*.json.
+        self.mission_config = None
+        self.current_wave_index = -1
+        self.wave_time_remaining = 0.0
+        self.wave_spawn_timer = 0.0
+        self.mission_failure_reason = None
+
         self.debug_collisions = False
 
     # ========================================================
@@ -137,7 +149,9 @@ class Game:
         self.triggers = self.tilemap.load_triggers()
         self.collisions = self.tilemap.load_collisions()
         self.npcs = self.tilemap.load_npcs()
-        self.enemies = self.tilemap.load_enemies()
+        # Mission enemies are spawned from the mission JSON, not fixed Tiled
+        # EnemySpawn objects. Tiled still defines player, collision and map data.
+        self.enemies = []
 
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
         spawn_position = self.tilemap.get_spawn("PlayerSpawn")
@@ -158,6 +172,8 @@ class Game:
         self.player.set_npcs(self.npcs)
         self.player.set_enemies(self.enemies)
         self.player.reset_transient_combat_state()
+        self.load_mission_config("first_assault")
+        self.reset_wave_state()
 
         for npc in self.npcs:
             npc.set_player(self.player)
@@ -174,6 +190,7 @@ class Game:
 
         self.mission_complete = False
         self.mission_phase = "briefing"
+        self.mission_failure_reason = None
         self.debug_collisions = False
         self.state = "playing"
 
@@ -227,11 +244,16 @@ class Game:
             raise ValueError(f"Aksi lanjutan narasi tidak dikenal: {action}")
 
     def start_war_mission(self):
-        """Load the battlefield for Scene 5 while keeping Leonhard playable."""
-        self.change_map("prologue_war_battlefield.tmx", "PlayerSpawn")
+        """Load Scene 5 and prepare its five configurable survival/elimination waves."""
+        self.change_map("prologue_war_battlefield.tmx", "PlayerSpawn", load_enemies=False)
         self.current_mission_id = "war_battlefield"
+        self.load_mission_config("war_of_fallen_skies")
+        self.reset_wave_state()
+        self.enemies = []
+        self.player.set_enemies(self.enemies)
         self.mission_phase = "briefing"
         self.mission_complete = False
+        self.mission_failure_reason = None
         # Treat each major playable sequence as a fresh mission attempt.
         self.player.stats["hp"] = self.player.stats["max_hp"]
 
@@ -239,6 +261,8 @@ class Game:
         """Load Scene 7 and register the Tiled ritual marker for interaction."""
         self.change_map("prologue_abandoned_village.tmx", "PlayerSpawn")
         self.current_mission_id = "abandoned_village"
+        self.mission_config = None
+        self.reset_wave_state()
         self.mission_phase = "active"
         self.mission_complete = False
 
@@ -268,21 +292,25 @@ class Game:
             self.begin_narrative(6, "scene7_prelude")
 
     def restart_current_mission(self):
-        if not self.current_map_path:
-            self.start_new_game()
-            return
-
         if self.current_mission_id == "first_assault":
             self.start_new_game()
             return
 
-        self.change_map(self.current_map_path, "PlayerSpawn")
-        self.player.stats["hp"] = self.player.stats["max_hp"]
-        self.mission_phase = "briefing" if self.current_mission_id == "war_battlefield" else "active"
-        self.mission_complete = False
+        if self.current_mission_id == "war_battlefield":
+            self.start_war_mission()
+            return
+
+        if self.current_mission_id == "abandoned_village":
+            self.start_village_sequence()
+            self.player.stats["hp"] = self.player.stats["max_hp"]
+            return
+
+        if not self.current_map_path:
+            self.start_new_game()
 
     def finish_prologue(self):
         self.ritual_rect = None
+        self.mission_config = None
         self.state = "ending"
 
     def handle_menu_action(self, action):
@@ -300,7 +328,7 @@ class Game:
     # MAP MANAGEMENT
     # ========================================================
 
-    def change_map(self, map_path, spawn_name):
+    def change_map(self, map_path, spawn_name, load_enemies=True):
         self.current_map_path = map_path
         new_map = TiledMap(
             f"assets/maps/{map_path}",
@@ -315,7 +343,7 @@ class Game:
         self.triggers = self.tilemap.load_triggers()
         self.collisions = new_map.load_collisions()
         self.npcs = self.tilemap.load_npcs()
-        self.enemies = self.tilemap.load_enemies()
+        self.enemies = self.tilemap.load_enemies() if load_enemies else []
 
         self.camera.set_bounds(new_map.width, new_map.height)
         self.player.pos = pygame.Vector2(
@@ -343,6 +371,273 @@ class Game:
         # A successful map change enters gameplay. This is important when
         # leaving a cinematic, restarting a mission, or following a map trigger.
         self.state = "playing"
+
+    # ========================================================
+    # MISSION CONFIGURATION AND WAVE SPAWNING
+    # ========================================================
+
+    def load_mission_config(self, mission_id):
+        """Load fixed-value mission settings from data/missions/<id>.json."""
+        path = Path(__file__).resolve().parent / "data" / "missions" / f"{mission_id}.json"
+        if not path.is_file():
+            raise FileNotFoundError(f"Konfigurasi misi tidak ditemukan: {path}")
+
+        with path.open("r", encoding="utf-8") as file:
+            config = json.load(file)
+
+        waves = config.get("waves")
+        if not isinstance(waves, list) or not waves:
+            raise ValueError(f"Misi '{mission_id}' harus memiliki daftar waves.")
+
+        self.mission_config = config
+
+    def reset_wave_state(self):
+        self.current_wave_index = -1
+        self.wave_time_remaining = 0.0
+        self.wave_spawn_timer = 0.0
+        self.mission_failure_reason = None
+
+    def get_current_wave(self):
+        if self.mission_config is None or self.current_wave_index < 0:
+            return None
+        waves = self.mission_config.get("waves", [])
+        if self.current_wave_index >= len(waves):
+            return None
+        return waves[self.current_wave_index]
+
+    def start_mission_waves(self):
+        """Begin the first wave after the player confirms the mission briefing."""
+        if self.mission_config is None:
+            self.mission_phase = "active"
+            return
+
+        self.current_wave_index = 0
+        self.mission_failure_reason = None
+        self.mission_phase = "active"
+        self.start_current_wave()
+
+    def start_current_wave(self):
+        """Start the current wave. War survivors remain; new wave forces are added."""
+        wave = self.get_current_wave()
+        if wave is None:
+            self.complete_wave_mission()
+            return
+
+        # Remove dead objects, but never recreate or heal surviving enemies.
+        self.enemies = [enemy for enemy in self.enemies if enemy.alive]
+        self.player.set_enemies(self.enemies)
+        self.wave_time_remaining = float(wave.get("duration", 0))
+        self.wave_spawn_timer = float(wave.get("spawn_interval", 0.75))
+
+        if self.mission_config.get("mode") == "elimination":
+            enemy_type = wave["enemy"]
+            minion_settings = wave["minions"]
+            boss_settings = wave["boss"]
+
+            # One large, tougher boss per wave.
+            self.spawn_mission_enemy(
+                enemy_type,
+                boss_settings,
+                name=f"Boss_Wave_{wave.get('wave', self.current_wave_index + 1)}",
+                is_boss=True,
+            )
+
+            # Minions use the boss's same enemy sprite, at their normal scale.
+            count = int(minion_settings.get("count", 0))
+            for number in range(count):
+                self.spawn_mission_enemy(
+                    enemy_type,
+                    minion_settings,
+                    name=f"{enemy_type.title()}_W{self.current_wave_index + 1}_{number + 1:02d}",
+                    is_boss=False,
+                )
+            return
+
+        wave_mode = wave.get("mode", "survival")
+        if wave_mode == "survival":
+            # Add the full wave's reinforcement quota even when survivors
+            # remain from the previous wave. After this initial addition,
+            # replenishment only targets active_target total living enemies.
+            initial_count = int(wave.get("active_target", 0))
+            for number in range(initial_count):
+                self.spawn_random_wave_enemy(wave, suffix=f"Opening_{number + 1:03d}")
+
+        # Final elimination wave intentionally spawns nothing.
+
+    def build_enemy_config(self, enemy_type, settings, is_boss=False):
+        """Combine an enemy's sprite/collider definition with fixed mission values."""
+        config = self.tilemap.entity_database.get("enemy", enemy_type)
+        config.update({key: value for key, value in settings.items() if key not in ("type", "weight", "count")})
+        config["hp"] = int(settings.get("hp", config.get("max_hp", 100)))
+        config["damage"] = float(settings.get("damage", config.get("damage", 10)))
+        config["speed"] = float(settings.get("speed", config.get("speed", 60)))
+        config["movement"] = settings.get("movement", "chase")
+        config["is_boss"] = bool(is_boss)
+        return config
+
+    def find_enemy_spawn_position(self, config):
+        """Pick a random walkable point around Leonhard, away from other bodies."""
+        spawn_settings = self.mission_config.get("spawn", {})
+        min_distance = float(spawn_settings.get("min_distance_from_player", 240))
+        max_distance = float(spawn_settings.get("max_distance_from_player", 760))
+        attempts = int(spawn_settings.get("attempts", 220))
+        min_gap = int(spawn_settings.get("min_gap", 18))
+        map_width = self.tilemap.width
+        map_height = self.tilemap.height
+
+        body = config.get("body_collider", {})
+        body_width = int(body.get("width", 24))
+        body_height = int(body.get("height", 16))
+        offset = body.get("offset", (0, 25))
+        offset_x, offset_y = float(offset[0]), float(offset[1])
+        padding = max(body_width, body_height) + 12
+        player_center = pygame.Vector2(self.player.pos)
+
+        for attempt in range(attempts):
+            # Most spawns form a random ring around the player. If that point
+            # falls outside the map, try another random point within the map.
+            if attempt < attempts * 0.8:
+                angle = random.random() * math.tau
+                distance = random.uniform(min_distance, max_distance)
+                x = player_center.x + math.cos(angle) * distance
+                y = player_center.y + math.sin(angle) * distance
+            else:
+                x = random.uniform(padding, max(padding + 1, map_width - padding))
+                y = random.uniform(padding, max(padding + 1, map_height - padding))
+
+            if not (padding <= x <= map_width - padding and padding <= y <= map_height - padding):
+                continue
+
+            body_rect = pygame.Rect(0, 0, body_width, body_height)
+            body_rect.center = (round(x + offset_x), round(y + offset_y))
+
+            if any(collision.collides(body_rect) for collision in self.collisions):
+                continue
+
+            if pygame.Vector2(x, y).distance_to(player_center) < min_distance:
+                continue
+
+            if body_rect.colliderect(self.player.body_collider.rect.inflate(100, 100)):
+                continue
+
+            blocked = False
+            for enemy in self.enemies:
+                if not enemy.alive:
+                    continue
+                if body_rect.colliderect(enemy.body_collider.rect.inflate(min_gap, min_gap)):
+                    blocked = True
+                    break
+            if blocked:
+                continue
+
+            return pygame.Vector2(round(x), round(y))
+
+        raise RuntimeError(
+            "Tidak menemukan posisi spawn yang aman. Periksa area terbuka pada peta "
+            "atau naikkan nilai spawn.attempts/min_distance_from_player."
+        )
+
+    def spawn_mission_enemy(self, enemy_type, settings, name, is_boss=False):
+        config = self.build_enemy_config(enemy_type, settings, is_boss=is_boss)
+        position = self.find_enemy_spawn_position(config)
+        enemy = Enemy(
+            x=position.x,
+            y=position.y,
+            name=name,
+            config=config,
+        )
+        enemy.set_player(self.player)
+        enemy.set_collisions(self.collisions)
+        enemy.is_boss = is_boss
+        enemy.enemy_type = enemy_type
+        self.enemies.append(enemy)
+        self.player.set_enemies(self.enemies)
+        return enemy
+
+    def choose_wave_enemy(self, wave):
+        pool = wave.get("enemies", [])
+        if not pool:
+            raise ValueError(f"Wave {wave.get('wave')} tidak memiliki enemy pool.")
+        weights = [max(0, float(entry.get("weight", 1))) for entry in pool]
+        if not any(weights):
+            raise ValueError(f"Wave {wave.get('wave')} memiliki semua weight nol.")
+        return random.choices(pool, weights=weights, k=1)[0]
+
+    def spawn_random_wave_enemy(self, wave, suffix="Reinforcement"):
+        entry = self.choose_wave_enemy(wave)
+        enemy_type = entry["type"]
+        enemy_settings = {
+            key: value
+            for key, value in entry.items()
+            if key not in ("type", "weight")
+        }
+        name = f"{enemy_type.title()}_W{self.current_wave_index + 1}_{suffix}"
+        return self.spawn_mission_enemy(enemy_type, enemy_settings, name, is_boss=False)
+
+    def complete_wave_mission(self):
+        self.mission_complete = True
+        self.mission_phase = "complete"
+        self.wave_time_remaining = 0.0
+
+    def fail_mission(self, reason):
+        self.mission_failure_reason = reason
+        self.state = "game_over"
+
+    def update_wave_mission(self, dt):
+        """Update elimination waves or timed survival waves for the active mission."""
+        if self.mission_config is None or self.mission_phase != "active":
+            return
+
+        wave = self.get_current_wave()
+        if wave is None:
+            self.complete_wave_mission()
+            return
+
+        living = sum(1 for enemy in self.enemies if enemy.alive)
+        mission_mode = self.mission_config.get("mode")
+
+        if mission_mode == "elimination":
+            if living == 0:
+                if self.current_wave_index + 1 < len(self.mission_config["waves"]):
+                    self.current_wave_index += 1
+                    self.start_current_wave()
+                else:
+                    self.complete_wave_mission()
+            return
+
+        wave_mode = wave.get("mode", "survival")
+        if wave_mode == "survival":
+            self.wave_time_remaining = max(0.0, self.wave_time_remaining - dt)
+            if self.wave_time_remaining <= 0:
+                if self.current_wave_index + 1 < len(self.mission_config["waves"]):
+                    self.current_wave_index += 1
+                    self.start_current_wave()
+                else:
+                    self.complete_wave_mission()
+                return
+
+            target = int(wave.get("active_target", 0))
+            interval = max(0.05, float(wave.get("spawn_interval", 0.75)))
+
+            if living < target:
+                self.wave_spawn_timer -= dt
+                if self.wave_spawn_timer <= 0:
+                    self.spawn_random_wave_enemy(wave, suffix="Reinforcement")
+                    self.wave_spawn_timer = interval
+            else:
+                self.wave_spawn_timer = interval
+            return
+
+        if wave_mode == "elimination":
+            # The final phase has no spawning; every survivor from earlier waves
+            # remains in the world and must be defeated before the countdown ends.
+            if living == 0:
+                self.complete_wave_mission()
+                return
+
+            self.wave_time_remaining = max(0.0, self.wave_time_remaining - dt)
+            if self.wave_time_remaining <= 0 and living > 0:
+                self.fail_mission("final_wave_timeout")
 
     def interact_with_npc(self):
         npc = self.get_nearby_npc()
@@ -425,7 +720,10 @@ class Game:
 
         if self.mission_phase == "briefing":
             if event.key in (pygame.K_SPACE, pygame.K_RETURN):
-                self.mission_phase = "active"
+                if self.mission_config is not None:
+                    self.start_mission_waves()
+                else:
+                    self.mission_phase = "active"
             return
 
         if self.mission_phase == "complete":
@@ -512,10 +810,14 @@ class Game:
             npc.update(dt)
 
         if self.player.stats["hp"] <= 0:
-            self.state = "game_over"
+            self.fail_mission("player_defeated")
             return
 
-        if self.enemies and not any(enemy.alive for enemy in self.enemies):
+        if self.mission_config is not None and self.mission_phase == "active":
+            self.update_wave_mission(dt)
+            if self.state != "playing" or self.mission_phase != "active":
+                return
+        elif self.enemies and not any(enemy.alive for enemy in self.enemies):
             self.mission_complete = True
             self.mission_phase = "complete"
             return
@@ -619,7 +921,7 @@ class Game:
                 enemy.draw_collision_debug(self.screen, self.camera)
 
     def draw_hud(self):
-        panel = pygame.Surface((390, 92), pygame.SRCALPHA)
+        panel = pygame.Surface((430, 118), pygame.SRCALPHA)
         panel.fill((12, 14, 20, 210))
         self.screen.blit(panel, (20, 18))
 
@@ -642,6 +944,16 @@ class Game:
         else:
             objective = "SASARAN: Temukan tempat ritual penyegelan"
 
+        if self.mission_config is not None and self.current_wave_index >= 0:
+            total_waves = len(self.mission_config.get("waves", []))
+            wave = self.get_current_wave() or {}
+            wave_label = f"GELOMBANG {self.current_wave_index + 1}/{total_waves}"
+            if self.mission_config.get("mode") == "survival_then_elimination":
+                seconds = max(0, int(math.ceil(self.wave_time_remaining)))
+                timer = f"{seconds // 60:02d}:{seconds % 60:02d}"
+                phase_label = "ELIMINASI" if wave.get("mode") == "elimination" else "BERTAHAN"
+                wave_label = f"{wave_label}  |  {phase_label}  |  {timer}"
+            objective = f"{wave_label}  |  MUSUH TERSISA: {remaining}"
         objective_surface = self.hud_small_font.render(objective, True, (238, 232, 215))
         self.screen.blit(objective_surface, (24, self.screen_height - 34))
 
@@ -675,7 +987,7 @@ class Game:
             if self.mission_phase == "briefing":
                 eyebrow = "PROLOG  /  MISI 02"
                 title = "PERANG LANGIT YANG RUNTUH"
-                description = "Hadapi pasukan iblis dan bertahan di tengah medan perang."
+                description = "Hadapi lima gelombang: bertahan dari empat serangan, lalu habisi semua musuh tersisa dalam 10 detik."
                 prompt = "TEKAN ENTER ATAU SPASI UNTUK MEMULAI"
             else:
                 eyebrow = "PROLOG  /  MISI 02 SELESAI"
@@ -686,12 +998,12 @@ class Game:
             if self.mission_phase == "briefing":
                 eyebrow = "PROLOG  /  MISI 01"
                 title = "PENYERBUAN PERTAMA"
-                description = "Usir empat penyerbu dari persimpangan kota luar."
+                description = "Kalahkan empat komandan iblis beserta pasukan mereka dalam empat gelombang."
                 prompt = "TEKAN ENTER ATAU SPASI UNTUK MEMULAI"
             else:
                 eyebrow = "PROLOG  /  MISI 01 SELESAI"
                 title = "KOTA LUAR AMAN"
-                description = "Para penyerbu berhasil dipukul mundur. Persimpangan kini aman."
+                description = "Keempat komandan dan seluruh pasukannya berhasil dikalahkan. Kota luar aman."
                 prompt = "SPASI: LANJUTKAN   R: ULANGI MISI   ESC: MENU"
 
         eyebrow_font = self.font_manager.get("main", 17)
@@ -711,16 +1023,25 @@ class Game:
 
     def draw_game_over(self):
         self.screen.fill((14, 12, 18))
+        if self.mission_failure_reason == "final_wave_timeout":
+            title_text = "WAKTU HABIS"
+            detail_text = "Musuh masih tersisa ketika waktu 10 detik berakhir."
+        else:
+            title_text = "LEONHARD TELAH GUGUR"
+            detail_text = "Leonhard tidak mampu bertahan di medan perang."
+
         title = self.font_manager.get("main", 54).render(
-            "LEONHARD TELAH GUGUR", True, (220, 190, 170)
+            title_text, True, (220, 190, 170)
         )
         prompt = self.hud_font.render(
             "Tekan R untuk mengulang misi  |  ESC untuk kembali ke menu",
             True,
             (225, 220, 205),
         )
-        self.screen.blit(title, title.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 35)))
-        self.screen.blit(prompt, prompt.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 35)))
+        detail = self.hud_small_font.render(detail_text, True, (225, 220, 205))
+        self.screen.blit(title, title.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 55)))
+        self.screen.blit(detail, detail.get_rect(center=(self.screen_width // 2, self.screen_height // 2)))
+        self.screen.blit(prompt, prompt.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 42)))
 
     def draw_ending_screen(self):
         self.screen.fill((8, 9, 14))

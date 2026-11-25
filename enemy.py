@@ -7,6 +7,10 @@ from collision import CollisionBox
 
 
 class Enemy:
+    # Share immutable sprite frames between enemies of the same visual type.
+    # This prevents loading and slicing the same PNG hundreds of times in waves.
+    _frame_cache = {}
+
     def __init__(self, x, y, name, config, path=None):
         self.name = name
         self.config = config
@@ -17,8 +21,11 @@ class Enemy:
 
         self.pos = pygame.Vector2(x, y)
 
-        self.max_hp = int(config.get("max_hp", 100))
+        # Mission files use the explicit fixed value "hp". Older Tiled/entity
+        # definitions can continue using "max_hp" for backward compatibility.
+        self.max_hp = int(config.get("hp", config.get("max_hp", 100)))
         self.hp = self.max_hp
+        self.is_boss = bool(config.get("is_boss", False))
 
         self.damage = float(config.get("damage", 10))
         self.speed = float(config.get("speed", 60))
@@ -43,12 +50,18 @@ class Enemy:
         self.animations = {}
 
         for state in ["idle", "walk", "attack"]:
-            frames = SpriteSheet(
-                os.path.join(sprite_path, f"{state}.png"),
-                frame_width,
-                frame_height,
-                scale=sprite_scale,
-            ).frames
+            sheet_path = os.path.abspath(os.path.join(sprite_path, f"{state}.png"))
+            cache_key = (sheet_path, frame_width, frame_height, sprite_scale)
+            frames = self._frame_cache.get(cache_key)
+
+            if frames is None:
+                frames = SpriteSheet(
+                    sheet_path,
+                    frame_width,
+                    frame_height,
+                    scale=sprite_scale,
+                ).frames
+                self._frame_cache[cache_key] = frames
 
             self.animations[state] = AnimatedSprite(
                 frames, speed=animation_speed, loop=(state != "attack")

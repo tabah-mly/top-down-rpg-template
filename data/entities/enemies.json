@@ -1,50 +1,122 @@
 {
-  "skeleton": {
-    "sprite": "skeleton",
-    "frame_width": 32,
-    "frame_height": 32,
-    "sprite_scale": 3,
-    "animation_speed": 0.1,
-    "max_hp": 200,
-    "damage": 25,
-    "speed": 45,
-    "movement": "patrol",
-    "patrol_direction": "up",
-    "patrol_distance": 64,
-    "pause_duration": 1.5,
-    "body_collider": {
-      "width": 36,
-      "height": 24,
-      "offset": [0, 25]
+    "skeleton": {
+        "sprite": "skeleton",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 200,
+        "damage": 25,
+        "speed": 45,
+        "movement": "patrol",
+        "patrol_direction": "up",
+        "patrol_distance": 64,
+        "pause_duration": 1.5,
+        "body_collider": {
+            "width": 36,
+            "height": 24,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 45,
+            "height": 63,
+            "offset": [
+                0,
+                10
+            ]
+        }
     },
-    "hurtbox": {
-      "width": 45,
-      "height": 63,
-      "offset": [0, 10]
-    }
-  },
-  "demon_raider": {
-    "sprite": "orc",
-    "frame_width": 100,
-    "frame_height": 100,
-    "sprite_scale": 2,
-    "animation_speed": 0.1,
-    "max_hp": 110,
-    "damage": 16,
-    "speed": 68,
-    "movement": "chase",
-    "aggro_range": 390,
-    "attack_range": 58,
-    "attack_cooldown": 1.45,
-    "body_collider": {
-      "width": 34,
-      "height": 24,
-      "offset": [0, 42]
+    "demon_raider": {
+        "sprite": "orc",
+        "frame_width": 100,
+        "frame_height": 100,
+        "sprite_scale": 2,
+        "animation_speed": 0.1,
+        "max_hp": 110,
+        "damage": 16,
+        "speed": 68,
+        "movement": "chase",
+        "aggro_range": 390,
+        "attack_range": 58,
+        "attack_cooldown": 1.45,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                42
+            ]
+        },
+        "hurtbox": {
+            "width": 42,
+            "height": 50,
+            "offset": [
+                0,
+                22
+            ]
+        }
     },
-    "hurtbox": {
-      "width": 42,
-      "height": 50,
-      "offset": [0, 22]
+    "orc": {
+        "sprite": "orc",
+        "frame_width": 100,
+        "frame_height": 100,
+        "sprite_scale": 2,
+        "animation_speed": 0.1,
+        "max_hp": 110,
+        "damage": 16,
+        "speed": 68,
+        "movement": "chase",
+        "aggro_range": 390,
+        "attack_range": 58,
+        "attack_cooldown": 1.45,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                42
+            ]
+        },
+        "hurtbox": {
+            "width": 42,
+            "height": 50,
+            "offset": [
+                0,
+                22
+            ]
+        }
+    },
+    "vampire": {
+        "sprite": "vampire",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 160,
+        "damage": 22,
+        "speed": 62,
+        "movement": "chase",
+        "aggro_range": 420,
+        "attack_range": 52,
+        "attack_cooldown": 1.35,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 42,
+            "height": 58,
+            "offset": [
+                0,
+                10
+            ]
+        }
     }
-  }
 }
