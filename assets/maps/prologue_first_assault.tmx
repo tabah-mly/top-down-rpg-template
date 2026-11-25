@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.12.2" orientation="orthogonal" renderorder="right-down" width="56" height="48" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="16">
-  
-  
-  <tileset firstgid="1" source="fsm_Town02_A2.tsx"/>
-  
-  
-  <tileset firstgid="1729" source="fsm_Town02_B.tsx"/>
-  
-  
-  <tileset firstgid="4033" source="City_TileB.tsx"/>
-  
-  
-  <tileset firstgid="6337" source="City_TileC.tsx"/>
-  
-  
-  <layer id="1" name="Ground" width="56" height="48">
-    
-    
-    <data encoding="csv">
+ <tileset firstgid="1" source="fsm_Town02_A2.tsx"/>
+ <tileset firstgid="1729" source="fsm_Town02_B.tsx"/>
+ <tileset firstgid="4033" source="City_TileB.tsx"/>
+ <tileset firstgid="6337" source="City_TileC.tsx"/>
+ <layer id="1" name="Ground" width="56" height="48">
+  <data encoding="csv">
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -67,15 +55,9 @@
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 </data>
-    
-  
-  </layer>
-  
-  
-  <layer id="2" name="Roads" width="56" height="48">
-    
-    
-    <data encoding="csv">
+ </layer>
+ <layer id="2" name="Roads" width="56" height="48">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,71,71,71,71,71,71,71,71,71,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,71,71,71,71,71,71,71,71,71,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,71,71,71,71,71,71,71,71,71,71,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -125,15 +107,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,71,71,71,71,71,0,0,0,0,0,0,71,71,71,71,71,71,71,71,71,71,0,0,0,0,0,0,71,71,71,71,71,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,71,71,71,71,71,0,0,0,0,0,0,71,71,71,71,71,71,71,71,71,71,0,0,0,0,0,0,71,71,71,71,71,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-    
-  
-  </layer>
-  
-  
-  <layer id="3" name="Architecture" width="56" height="48">
-    
-    
-    <data encoding="csv">
+ </layer>
+ <layer id="3" name="Architecture" width="56" height="48">
+  <data encoding="csv">
 6343,6344,6345,6346,6347,6348,6349,6350,6351,6352,6353,6354,6355,6356,6357,6358,6359,6360,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4043,4044,4045,0,0,0,0,0,0,0,0,0,0,0,
 6391,6392,6393,6394,6395,6396,6397,6398,6399,6400,6401,6402,6403,6404,6405,6406,6407,6408,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4090,4091,4092,4093,4094,4095,4096,4097,4098,4099,4100,4101,4102,4103,4104,
 6439,6440,6441,6442,6443,6444,6445,6446,6447,6448,6449,6450,6451,6452,6453,6454,6455,6456,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4138,4139,4140,4141,4142,4143,4144,4145,4146,4147,4148,4149,4150,4151,4152,
@@ -183,15 +159,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-    
-  
-  </layer>
-  
-  
-  <layer id="4" name="Street Debris" width="56" height="48">
-    
-    
-    <data encoding="csv">
+ </layer>
+ <layer id="4" name="Street Debris" width="56" height="48" visible="0">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -241,15 +211,9 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-    
-  
-  </layer>
-  
-  
-  <layer id="5" name="Trees" width="56" height="48">
-    
-    
-    <data encoding="csv">
+ </layer>
+ <layer id="5" name="Trees" width="56" height="48" visible="0">
+  <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -299,108 +263,38 @@
 3280,3281,3282,3283,3284,3285,3286,3287,3288,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3280,3281,3282,3283,3284,3285,3286,3287,3288,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
-    
-  
-  </layer>
-  
-  
-  <objectgroup id="6" name="Entities" draworder="topdown">
-    
-    
-    <object id="1" name="PlayerSpawn" class="PlayerSpawn" x="448" y="704"/>
-    
-    
-    <object id="2" name="Raider_North" class="EnemySpawn" x="448" y="288">
-      
-      
-      <properties>
-        
-        
-        <property name="entity_id" type="string" value="demon_raider"/>
-        
-      
-      </properties>
-      
-    
-    </object>
-    
-    
-    <object id="3" name="Raider_West" class="EnemySpawn" x="272" y="448">
-      
-      
-      <properties>
-        
-        
-        <property name="entity_id" type="string" value="demon_raider"/>
-        
-      
-      </properties>
-      
-    
-    </object>
-    
-    
-    <object id="4" name="Raider_East" class="EnemySpawn" x="688" y="448">
-      
-      
-      <properties>
-        
-        
-        <property name="entity_id" type="string" value="demon_raider"/>
-        
-      
-      </properties>
-      
-    
-    </object>
-    
-    
-    <object id="5" name="Raider_Retreat" class="EnemySpawn" x="448" y="576">
-      
-      
-      <properties>
-        
-        
-        <property name="entity_id" type="string" value="demon_raider"/>
-        
-      
-      </properties>
-      
-    
-    </object>
-    
-  
-  </objectgroup>
-  
-  
-  <objectgroup id="7" name="Collisions" draworder="topdown">
-    
-    
-    <object id="6" name="WestHouseFront" class="" x="0" y="360" width="288" height="24"/>
-    
-    
-    <object id="7" name="EastHouseFront" class="" x="656" y="360" width="240" height="24"/>
-    
-    
-    <object id="8" name="SouthwestTreeTrunk" class="" x="48" y="720" width="48" height="28"/>
-    
-    
-    <object id="9" name="SoutheastTreeTrunk" class="" x="800" y="720" width="48" height="28"/>
-    
-    
-    <object id="10" name="NorthBoundary" class="" x="0" y="0" width="896" height="8"/>
-    
-    
-    <object id="11" name="SouthBoundary" class="" x="0" y="760" width="896" height="8"/>
-    
-    
-    <object id="12" name="WestBoundary" class="" x="0" y="0" width="8" height="768"/>
-    
-    
-    <object id="13" name="EastBoundary" class="" x="888" y="0" width="8" height="768"/>
-    
-  
-  </objectgroup>
-  
-
+ </layer>
+ <objectgroup id="6" name="Entities">
+  <object id="1" name="PlayerSpawn" type="PlayerSpawn" x="448" y="704"/>
+  <object id="2" name="Raider_North" type="EnemySpawn" x="448" y="288">
+   <properties>
+    <property name="entity_id" value="demon_raider"/>
+   </properties>
+  </object>
+  <object id="3" name="Raider_West" type="EnemySpawn" x="272" y="448">
+   <properties>
+    <property name="entity_id" value="demon_raider"/>
+   </properties>
+  </object>
+  <object id="4" name="Raider_East" type="EnemySpawn" x="688" y="448">
+   <properties>
+    <property name="entity_id" value="demon_raider"/>
+   </properties>
+  </object>
+  <object id="5" name="Raider_Retreat" type="EnemySpawn" x="448" y="576">
+   <properties>
+    <property name="entity_id" value="demon_raider"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="Collisions">
+  <object id="6" name="WestHouseFront" x="0" y="-2" width="288" height="386"/>
+  <object id="7" name="EastHouseFront" x="656" y="4" width="240" height="380"/>
+  <object id="8" name="SouthwestTreeTrunk" x="25" y="802" width="48" height="28"/>
+  <object id="9" name="SoutheastTreeTrunk" x="812" y="798" width="48" height="28"/>
+  <object id="10" name="NorthBoundary" x="0" y="0" width="896" height="8"/>
+  <object id="11" name="SouthBoundary" x="0" y="760" width="896" height="8"/>
+  <object id="12" name="WestBoundary" x="0" y="0" width="8" height="768"/>
+  <object id="13" name="EastBoundary" x="888" y="0" width="8" height="768"/>
+ </objectgroup>
 </map>

@@ -1,224 +1,229 @@
 {
-    "mission_id": "war_of_fallen_skies",
-    "title": "Perang Langit yang Runtuh",
-    "mode": "survival_then_elimination",
-    "spawn": {
-        "min_distance_from_player": 260,
-        "max_distance_from_player": 820,
-        "attempts": 420,
-        "min_gap": 16
-    },
-    "waves": [
+  "mission_id": "war_of_fallen_skies",
+  "title": "Perang Langit yang Runtuh",
+  "mode": "survival_then_elimination",
+  "spawn": {
+    "min_distance_from_player": 320,
+    "attempts": 720,
+    "min_gap": 64,
+    "distribution": "spread",
+    "grid_columns": 4,
+    "grid_rows": 4
+  },
+  "waves": [
+    {
+      "wave": 1,
+      "mode": "survival",
+      "duration": 120,
+      "active_target": 15,
+      "spawn_interval": 0.65,
+      "enemies": [
         {
-            "wave": 1,
-            "mode": "survival",
-            "duration": 120,
-            "active_target": 15,
-            "spawn_interval": 0.65,
-            "enemies": [
-                {
-                    "type": "orc",
-                    "weight": 100,
-                    "hp": 110,
-                    "damage": 16,
-                    "speed": 68,
-                    "sprite_scale": 2,
-                    "movement": "chase",
-                    "aggro_range": 420,
-                    "attack_range": 58,
-                    "attack_cooldown": 1.45,
-                    "body_collider": {
-                        "width": 34,
-                        "height": 24,
-                        "offset": [
-                            0,
-                            42
-                        ]
-                    },
-                    "hurtbox": {
-                        "width": 42,
-                        "height": 50,
-                        "offset": [
-                            0,
-                            22
-                        ]
-                    }
-                }
+          "type": "orc",
+          "weight": 100,
+          "hp": 110,
+          "damage": 16,
+          "speed": 68,
+          "sprite_scale": 2,
+          "movement": "chase",
+          "aggro_range": 420,
+          "attack_range": 58,
+          "attack_cooldown": 1.45,
+          "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+              0,
+              42
             ]
-        },
-        {
-            "wave": 2,
-            "mode": "survival",
-            "duration": 90,
-            "active_target": 30,
-            "spawn_interval": 0.6,
-            "enemies": [
-                {
-                    "type": "skeleton",
-                    "weight": 100,
-                    "hp": 180,
-                    "damage": 22,
-                    "speed": 52,
-                    "sprite_scale": 3,
-                    "movement": "chase",
-                    "aggro_range": 420,
-                    "attack_range": 52,
-                    "attack_cooldown": 1.5,
-                    "body_collider": {
-                        "width": 36,
-                        "height": 24,
-                        "offset": [
-                            0,
-                            25
-                        ]
-                    },
-                    "hurtbox": {
-                        "width": 45,
-                        "height": 63,
-                        "offset": [
-                            0,
-                            10
-                        ]
-                    }
-                }
+          },
+          "hurtbox": {
+            "width": 42,
+            "height": 50,
+            "offset": [
+              0,
+              22
             ]
-        },
-        {
-            "wave": 3,
-            "mode": "survival",
-            "duration": 60,
-            "active_target": 45,
-            "spawn_interval": 0.55,
-            "enemies": [
-                {
-                    "type": "vampire",
-                    "weight": 100,
-                    "hp": 240,
-                    "damage": 26,
-                    "speed": 68,
-                    "sprite_scale": 3,
-                    "movement": "chase",
-                    "aggro_range": 440,
-                    "attack_range": 52,
-                    "attack_cooldown": 1.35,
-                    "body_collider": {
-                        "width": 34,
-                        "height": 24,
-                        "offset": [
-                            0,
-                            25
-                        ]
-                    },
-                    "hurtbox": {
-                        "width": 42,
-                        "height": 58,
-                        "offset": [
-                            0,
-                            10
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "wave": 4,
-            "mode": "survival",
-            "duration": 30,
-            "active_target": 60,
-            "spawn_interval": 0.5,
-            "enemies": [
-                {
-                    "type": "orc",
-                    "weight": 40,
-                    "hp": 240,
-                    "damage": 28,
-                    "speed": 75,
-                    "sprite_scale": 2,
-                    "movement": "chase",
-                    "aggro_range": 460,
-                    "attack_range": 58,
-                    "attack_cooldown": 1.35,
-                    "body_collider": {
-                        "width": 34,
-                        "height": 24,
-                        "offset": [
-                            0,
-                            42
-                        ]
-                    },
-                    "hurtbox": {
-                        "width": 42,
-                        "height": 50,
-                        "offset": [
-                            0,
-                            22
-                        ]
-                    }
-                },
-                {
-                    "type": "skeleton",
-                    "weight": 35,
-                    "hp": 280,
-                    "damage": 32,
-                    "speed": 60,
-                    "sprite_scale": 3,
-                    "movement": "chase",
-                    "aggro_range": 460,
-                    "attack_range": 52,
-                    "attack_cooldown": 1.4,
-                    "body_collider": {
-                        "width": 36,
-                        "height": 24,
-                        "offset": [
-                            0,
-                            25
-                        ]
-                    },
-                    "hurtbox": {
-                        "width": 45,
-                        "height": 63,
-                        "offset": [
-                            0,
-                            10
-                        ]
-                    }
-                },
-                {
-                    "type": "vampire",
-                    "weight": 25,
-                    "hp": 320,
-                    "damage": 34,
-                    "speed": 80,
-                    "sprite_scale": 3,
-                    "movement": "chase",
-                    "aggro_range": 480,
-                    "attack_range": 52,
-                    "attack_cooldown": 1.3,
-                    "body_collider": {
-                        "width": 34,
-                        "height": 24,
-                        "offset": [
-                            0,
-                            25
-                        ]
-                    },
-                    "hurtbox": {
-                        "width": 42,
-                        "height": 58,
-                        "offset": [
-                            0,
-                            10
-                        ]
-                    }
-                }
-            ]
-        },
-        {
-            "wave": 5,
-            "mode": "elimination",
-            "duration": 10,
-            "spawn": false,
-            "objective": "Eliminate all enemies remaining before time runs out."
+          }
         }
-    ]
+      ]
+    },
+    {
+      "wave": 2,
+      "mode": "survival",
+      "duration": 90,
+      "active_target": 30,
+      "spawn_interval": 0.6,
+      "enemies": [
+        {
+          "type": "skeleton",
+          "weight": 100,
+          "hp": 180,
+          "damage": 22,
+          "speed": 52,
+          "sprite_scale": 3,
+          "movement": "chase",
+          "aggro_range": 420,
+          "attack_range": 52,
+          "attack_cooldown": 1.5,
+          "body_collider": {
+            "width": 36,
+            "height": 24,
+            "offset": [
+              0,
+              25
+            ]
+          },
+          "hurtbox": {
+            "width": 45,
+            "height": 63,
+            "offset": [
+              0,
+              10
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "wave": 3,
+      "mode": "survival",
+      "duration": 60,
+      "active_target": 45,
+      "spawn_interval": 0.55,
+      "enemies": [
+        {
+          "type": "vampire",
+          "weight": 100,
+          "hp": 240,
+          "damage": 26,
+          "speed": 68,
+          "sprite_scale": 3,
+          "movement": "chase",
+          "aggro_range": 440,
+          "attack_range": 52,
+          "attack_cooldown": 1.35,
+          "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+              0,
+              25
+            ]
+          },
+          "hurtbox": {
+            "width": 42,
+            "height": 58,
+            "offset": [
+              0,
+              10
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "wave": 4,
+      "mode": "survival",
+      "duration": 30,
+      "active_target": 60,
+      "spawn_interval": 0.5,
+      "enemies": [
+        {
+          "type": "orc",
+          "weight": 40,
+          "hp": 240,
+          "damage": 28,
+          "speed": 75,
+          "sprite_scale": 2,
+          "movement": "chase",
+          "aggro_range": 460,
+          "attack_range": 58,
+          "attack_cooldown": 1.35,
+          "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+              0,
+              42
+            ]
+          },
+          "hurtbox": {
+            "width": 42,
+            "height": 50,
+            "offset": [
+              0,
+              22
+            ]
+          }
+        },
+        {
+          "type": "skeleton",
+          "weight": 35,
+          "hp": 280,
+          "damage": 32,
+          "speed": 60,
+          "sprite_scale": 3,
+          "movement": "chase",
+          "aggro_range": 460,
+          "attack_range": 52,
+          "attack_cooldown": 1.4,
+          "body_collider": {
+            "width": 36,
+            "height": 24,
+            "offset": [
+              0,
+              25
+            ]
+          },
+          "hurtbox": {
+            "width": 45,
+            "height": 63,
+            "offset": [
+              0,
+              10
+            ]
+          }
+        },
+        {
+          "type": "vampire",
+          "weight": 25,
+          "hp": 320,
+          "damage": 34,
+          "speed": 80,
+          "sprite_scale": 3,
+          "movement": "chase",
+          "aggro_range": 480,
+          "attack_range": 52,
+          "attack_cooldown": 1.3,
+          "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+              0,
+              25
+            ]
+          },
+          "hurtbox": {
+            "width": 42,
+            "height": 58,
+            "offset": [
+              0,
+              10
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "wave": 5,
+      "mode": "elimination",
+      "duration": 10,
+      "spawn": false,
+      "objective": "Eliminate all enemies remaining before time runs out."
+    }
+  ],
+  "enemy_behavior": {
+    "aggro_mode": "always"
+  }
 }

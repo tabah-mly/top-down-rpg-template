@@ -472,16 +472,21 @@ class Game:
         config["damage"] = float(settings.get("damage", config.get("damage", 10)))
         config["speed"] = float(settings.get("speed", config.get("speed", 60)))
         config["movement"] = settings.get("movement", "chase")
+        mission_behavior = self.mission_config.get("enemy_behavior", {})
+        config["aggro_mode"] = settings.get(
+            "aggro_mode", mission_behavior.get("aggro_mode", "proximity")
+        )
         config["is_boss"] = bool(is_boss)
         return config
 
     def find_enemy_spawn_position(self, config):
-        """Pick a random walkable point around Leonhard, away from other bodies."""
+        """Choose a safe spawn point, optionally spreading enemies across map zones."""
         spawn_settings = self.mission_config.get("spawn", {})
         min_distance = float(spawn_settings.get("min_distance_from_player", 240))
         max_distance = float(spawn_settings.get("max_distance_from_player", 760))
-        attempts = int(spawn_settings.get("attempts", 220))
+        attempts = max(1, int(spawn_settings.get("attempts", 220)))
         min_gap = int(spawn_settings.get("min_gap", 18))
+        distribution = str(spawn_settings.get("distribution", "ring")).lower()
         map_width = self.tilemap.width
         map_height = self.tilemap.height
 
@@ -493,44 +498,97 @@ class Game:
         padding = max(body_width, body_height) + 12
         player_center = pygame.Vector2(self.player.pos)
 
-        for attempt in range(attempts):
-            # Most spawns form a random ring around the player. If that point
-            # falls outside the map, try another random point within the map.
-            if attempt < attempts * 0.8:
-                angle = random.random() * math.tau
-                distance = random.uniform(min_distance, max_distance)
-                x = player_center.x + math.cos(angle) * distance
-                y = player_center.y + math.sin(angle) * distance
-            else:
-                x = random.uniform(padding, max(padding + 1, map_width - padding))
-                y = random.uniform(padding, max(padding + 1, map_height - padding))
-
+        def valid_position(x, y):
             if not (padding <= x <= map_width - padding and padding <= y <= map_height - padding):
-                continue
+                return None
+
+            if pygame.Vector2(x, y).distance_to(player_center) < min_distance:
+                return None
 
             body_rect = pygame.Rect(0, 0, body_width, body_height)
             body_rect.center = (round(x + offset_x), round(y + offset_y))
 
             if any(collision.collides(body_rect) for collision in self.collisions):
-                continue
-
-            if pygame.Vector2(x, y).distance_to(player_center) < min_distance:
-                continue
+                return None
 
             if body_rect.colliderect(self.player.body_collider.rect.inflate(100, 100)):
-                continue
+                return None
 
-            blocked = False
             for enemy in self.enemies:
                 if not enemy.alive:
                     continue
                 if body_rect.colliderect(enemy.body_collider.rect.inflate(min_gap, min_gap)):
-                    blocked = True
-                    break
-            if blocked:
-                continue
+                    return None
 
             return pygame.Vector2(round(x), round(y))
+
+        if distribution == "spread":
+            # Divide the map into zones and prefer the least-populated zone.
+            # During an opening wave this distributes spawns over the entire
+            # battlefield; later reinforcements tend to enter from less crowded
+            # parts of the map instead of clustering around Leonhard.
+            columns = max(1, int(spawn_settings.get("grid_columns", 4)))
+            rows = max(1, int(spawn_settings.get("grid_rows", 4)))
+            cell_counts = [0] * (columns * rows)
+
+            for enemy in self.enemies:
+                if not enemy.alive:
+                    continue
+                col = min(columns - 1, max(0, int(enemy.pos.x / map_width * columns)))
+                row = min(rows - 1, max(0, int(enemy.pos.y / map_height * rows)))
+                cell_counts[row * columns + col] += 1
+
+            cell_order = list(range(columns * rows))
+            random.shuffle(cell_order)
+            cell_order.sort(key=lambda index: cell_counts[index])
+            attempts_per_cell = max(12, math.ceil(attempts / len(cell_order)))
+
+            for cell_index in cell_order:
+                col = cell_index % columns
+                row = cell_index // columns
+                cell_left = col * map_width / columns
+                cell_right = (col + 1) * map_width / columns
+                cell_top = row * map_height / rows
+                cell_bottom = (row + 1) * map_height / rows
+
+                left = max(padding, cell_left + padding)
+                right = min(map_width - padding, cell_right - padding)
+                top = max(padding, cell_top + padding)
+                bottom = min(map_height - padding, cell_bottom - padding)
+                if right <= left or bottom <= top:
+                    continue
+
+                for _ in range(attempts_per_cell):
+                    x = random.uniform(left, right)
+                    y = random.uniform(top, bottom)
+                    position = valid_position(x, y)
+                    if position is not None:
+                        return position
+
+            # A few maps have heavily obstructed zones. Fall back to uniform
+            # map-wide sampling while keeping every safety/spacing constraint.
+            for _ in range(attempts):
+                x = random.uniform(padding, max(padding + 1, map_width - padding))
+                y = random.uniform(padding, max(padding + 1, map_height - padding))
+                position = valid_position(x, y)
+                if position is not None:
+                    return position
+
+        else:
+            # Legacy ring distribution remains available for future missions.
+            for attempt in range(attempts):
+                if attempt < attempts * 0.8:
+                    angle = random.random() * math.tau
+                    distance = random.uniform(min_distance, max_distance)
+                    x = player_center.x + math.cos(angle) * distance
+                    y = player_center.y + math.sin(angle) * distance
+                else:
+                    x = random.uniform(padding, max(padding + 1, map_width - padding))
+                    y = random.uniform(padding, max(padding + 1, map_height - padding))
+
+                position = valid_position(x, y)
+                if position is not None:
+                    return position
 
         raise RuntimeError(
             "Tidak menemukan posisi spawn yang aman. Periksa area terbuka pada peta "

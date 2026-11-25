@@ -108,6 +108,9 @@ class Enemy:
         self.pause_duration = float(config.get("pause_duration", 1.5))
 
         self.aggro_range = float(config.get("aggro_range", 280))
+        self.aggro_mode = str(config.get("aggro_mode", "proximity")).lower()
+        if self.aggro_mode not in ("proximity", "always"):
+            self.aggro_mode = "proximity"
         self.attack_range = float(config.get("attack_range", 48))
         self.attack_cooldown = float(config.get("attack_cooldown", 1.4))
         self.attack_timer = 0.0
@@ -173,7 +176,9 @@ class Enemy:
         direction = self.player.pos - self.pos
         distance = direction.length()
 
-        if distance > self.aggro_range:
+        # Proximity enemies wait until Leonhard enters their aggro radius.
+        # Always-aggressive enemies pursue him from any distance.
+        if self.aggro_mode == "proximity" and distance > self.aggro_range:
             self.set_animation("idle")
             return
 
