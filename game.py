@@ -20,6 +20,7 @@ from quest_database import QuestDatabase
 from dialogue_manager import DialogueManager
 from story_state import StoryState
 from enemy import Enemy
+from debug import DEBUG, BODY_COLLISION_COLOR, HURTBOX_COLOR, PLAYER_MELEE_HITBOX_COLOR, ENEMY_ATTACK_RANGE_COLOR, PROJECTILE_HITBOX_COLOR, MAP_RECT_COLOR, MAP_ELLIPSE_COLOR, MAP_POLYGON_COLOR
 
 
 class Game:
@@ -128,7 +129,7 @@ class Game:
         self.wave_spawn_timer = 0.0
         self.mission_failure_reason = None
 
-        self.debug_collisions = False
+        self.debug = DEBUG
 
     # ========================================================
     # GAME STATE
@@ -191,7 +192,7 @@ class Game:
         self.mission_complete = False
         self.mission_phase = "briefing"
         self.mission_failure_reason = None
-        self.debug_collisions = False
+        self.debug = DEBUG
         self.state = "playing"
 
     def begin_narrative(self, scene_number, next_action, pages=None):
@@ -949,8 +950,9 @@ class Game:
             player_screen_pos = self.camera.apply(self.player.rect).center
             self.pointer.draw(self.screen, player_screen_pos)
 
-        for trigger in self.triggers:
-            trigger.draw_debug(self.screen, self.camera)
+        if self.debug:
+            for trigger in self.triggers:
+                trigger.draw_debug(self.screen, self.camera)
 
         self.dialog.draw(self.screen)
         self.draw_hud()
@@ -969,14 +971,53 @@ class Game:
             pygame.draw.rect(self.screen, (12, 14, 20), panel, border_radius=6)
             self.screen.blit(prompt, prompt_rect)
 
-        if self.debug_collisions:
+        if self.debug:
             for collision in self.collisions:
                 collision.draw_debug(self.screen, self.camera)
+
             self.player.draw_collision_debug(self.screen, self.camera)
             for npc in self.npcs:
                 npc.draw_collision_debug(self.screen, self.camera)
             for enemy in self.enemies:
                 enemy.draw_collision_debug(self.screen, self.camera)
+
+            self.draw_debug_legend()
+
+    def draw_debug_legend(self):
+        """Display the meaning of debug outlines in the top-right corner."""
+        rows = [
+            ("Body collision", BODY_COLLISION_COLOR),
+            ("Hurtbox", HURTBOX_COLOR),
+            ("Player melee hitbox", PLAYER_MELEE_HITBOX_COLOR),
+            ("Enemy melee range (while attacking)", ENEMY_ATTACK_RANGE_COLOR),
+            ("Projectile hitbox", PROJECTILE_HITBOX_COLOR),
+        ]
+
+        panel_width = 236
+        row_height = 19
+        panel_height = 12 + row_height * (len(rows) + 1)
+        panel = pygame.Surface((panel_width, panel_height), pygame.SRCALPHA)
+        panel.fill((8, 12, 18, 205))
+        pygame.draw.rect(panel, (180, 190, 205), panel.get_rect(), 1, border_radius=5)
+
+        title = self.hud_small_font.render("DEBUG COLLISION", True, (245, 235, 205))
+        panel.blit(title, (9, 6))
+
+        for index, (label, color) in enumerate(rows):
+            y = 27 + index * row_height
+            pygame.draw.rect(panel, color, (10, y + 3, 13, 13), 2)
+            text = self.hud_small_font.render(label, True, (225, 230, 238))
+            panel.blit(text, (31, y))
+
+        # Map collision objects use different colors according to their shape.
+        y = 27 + len(rows) * row_height
+        pygame.draw.rect(panel, MAP_RECT_COLOR, (10, y + 3, 8, 13), 2)
+        pygame.draw.ellipse(panel, MAP_ELLIPSE_COLOR, (21, y + 3, 8, 13), 2)
+        pygame.draw.polygon(panel, MAP_POLYGON_COLOR, [(36, y + 3), (43, y + 16), (29, y + 16)], 2)
+        text = self.hud_small_font.render("Map collision shapes", True, (225, 230, 238))
+        panel.blit(text, (49, y))
+
+        self.screen.blit(panel, (self.screen_width - panel_width - 18, 18))
 
     def draw_hud(self):
         panel = pygame.Surface((430, 118), pygame.SRCALPHA)

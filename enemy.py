@@ -4,6 +4,7 @@ import pygame
 from animated_sprite import AnimatedSprite
 from spritesheet import SpriteSheet
 from collision import CollisionBox
+from debug import DEBUG, BODY_COLLISION_COLOR, HURTBOX_COLOR, ENEMY_ATTACK_RANGE_COLOR
 
 
 class Enemy:
@@ -142,7 +143,7 @@ class Enemy:
         self.collisions = []
 
         # Debug
-        self.is_debug = True
+        self.is_debug = DEBUG
 
     # ======================================================
     # Update
@@ -242,9 +243,24 @@ class Enemy:
         self.hurtbox.update(self.pos)
 
     def draw_collision_debug(self, surface, camera):
-        self.body_collider.draw_debug(surface, camera, (0, 255, 0))
+        if not self.alive:
+            return
 
-        self.hurtbox.draw_debug(surface, camera, (255, 0, 255))
+        self.body_collider.draw_debug(surface, camera, BODY_COLLISION_COLOR)
+        self.hurtbox.draw_debug(surface, camera, HURTBOX_COLOR)
+
+        # Enemy melee damage is applied when the player center is within
+        # attack_range of the enemy center. Show the range during its attack
+        # animation so large waves do not become cluttered with range circles.
+        if self.state == "attack":
+            screen_pos = self.pos - camera.offset
+            pygame.draw.circle(
+                surface,
+                ENEMY_ATTACK_RANGE_COLOR,
+                (round(screen_pos.x), round(screen_pos.y)),
+                round(self.attack_range),
+                2,
+            )
 
     def set_player(self, player):
         self.player = player

@@ -1,5 +1,7 @@
 import pygame
 
+from debug import MAP_RECT_COLOR, MAP_ELLIPSE_COLOR, MAP_POLYGON_COLOR
+
 
 class CollisionShape:
     def __init__(self, shape_type, rect=None, points=None):
@@ -83,11 +85,11 @@ class CollisionShape:
     def draw_debug(self, surface, camera, color=None):
         if color is None:
             if self.shape_type == "rect":
-                color = (255, 0, 0)
+                color = MAP_RECT_COLOR
             elif self.shape_type == "ellipse":
-                color = (0, 180, 255)
+                color = MAP_ELLIPSE_COLOR
             elif self.shape_type == "polygon":
-                color = (0, 255, 100)
+                color = MAP_POLYGON_COLOR
 
         if self.shape_type == "rect":
             pygame.draw.rect(surface, color, camera.apply(self.rect), 2)

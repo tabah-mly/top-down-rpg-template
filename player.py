@@ -4,6 +4,7 @@ from spritesheet import SpriteSheet
 from collision import CollisionBox
 from projectile import Projectile
 from attack import Attack
+from debug import DEBUG, BODY_COLLISION_COLOR, HURTBOX_COLOR
 
 
 class Player:
@@ -78,7 +79,7 @@ class Player:
 
         self.projectiles = []
         self.attack = Attack()
-        self.attack.is_debug = False
+        self.attack.is_debug = DEBUG
 
         self.can_attack = True
 
@@ -279,9 +280,8 @@ class Player:
         self.hurtbox.update(self.pos)
 
     def draw_collision_debug(self, surface, camera):
-        self.body_collider.draw_debug(surface, camera, (0, 255, 0))
-
-        self.hurtbox.draw_debug(surface, camera, (255, 0, 255))
+        self.body_collider.draw_debug(surface, camera, BODY_COLLISION_COLOR)
+        self.hurtbox.draw_debug(surface, camera, HURTBOX_COLOR)
 
     def take_damage(self, amount):
         if self.invulnerability_timer > 0 or self.stats["hp"] <= 0:

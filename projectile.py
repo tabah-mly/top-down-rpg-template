@@ -1,5 +1,7 @@
 import pygame
 
+from debug import DEBUG, PROJECTILE_HITBOX_COLOR
+
 
 class Projectile:
     def __init__(self, pos, direction, player_speed, speed=500, max_range=250):
@@ -14,6 +16,7 @@ class Projectile:
 
         self.speed = speed + player_speed
         self.radius = 6
+        self.debug = DEBUG
 
         self.alive = True
         self.distance_travelled = 0
@@ -59,11 +62,12 @@ class Projectile:
             self.radius,
         )
 
-        # Debug collision radius
-        pygame.draw.circle(
-            surface,
-            (255, 0, 0),
-            (round(screen_pos.x), round(screen_pos.y)),
-            self.radius,
-            1,
-        )
+        # The outline is the exact circular radius used by collides_with().
+        if self.debug:
+            pygame.draw.circle(
+                surface,
+                PROJECTILE_HITBOX_COLOR,
+                (round(screen_pos.x), round(screen_pos.y)),
+                self.radius,
+                2,
+            )

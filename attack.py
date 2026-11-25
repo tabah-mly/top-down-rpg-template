@@ -1,5 +1,7 @@
 import pygame
 
+from debug import DEBUG, PLAYER_MELEE_HITBOX_COLOR
+
 
 class Attack:
     def __init__(self, offset=(0, 8)):
@@ -22,7 +24,7 @@ class Attack:
         self.has_hit = False
         self.hit_targets = set()
 
-        self.is_debug = False
+        self.is_debug = DEBUG
 
     def start(self, origin=None):
         self.progress = 0
@@ -133,13 +135,28 @@ class Attack:
 
         self.draw_cres(surface, t, screen_pos, size=size, angle=self.base_angle)
 
-        if self.is_debug:
+        if self.is_debug and self.active and self.has_hit:
             debug_pos = self.hit_pos - camera.offset
+            center = (round(debug_pos.x), round(debug_pos.y))
 
             pygame.draw.circle(
                 surface,
-                (255, 0, 0),
-                (round(debug_pos.x), round(debug_pos.y)),
+                PLAYER_MELEE_HITBOX_COLOR,
+                center,
                 self.hit_radius,
                 2,
+            )
+            pygame.draw.line(
+                surface,
+                PLAYER_MELEE_HITBOX_COLOR,
+                (center[0] - 7, center[1]),
+                (center[0] + 7, center[1]),
+                1,
+            )
+            pygame.draw.line(
+                surface,
+                PLAYER_MELEE_HITBOX_COLOR,
+                (center[0], center[1] - 7),
+                (center[0], center[1] + 7),
+                1,
             )
