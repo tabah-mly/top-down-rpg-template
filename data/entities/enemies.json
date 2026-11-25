@@ -118,5 +118,185 @@
                 10
             ]
         }
+    },
+    "orc_assault_minion": {
+        "sprite": "orc",
+        "frame_width": 100,
+        "frame_height": 100,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 110,
+        "damage": 12.0,
+        "speed": 68.0,
+        "movement": "chase",
+        "aggro_range": 420.0,
+        "attack_range": 58.0,
+        "attack_cooldown": 1.6,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                8
+            ]
+        },
+        "hurtbox": {
+            "width": 38,
+            "height": 46,
+            "offset": [
+                0,
+                0
+            ]
+        }
+    },
+    "orc_boss": {
+        "sprite": "orc",
+        "frame_width": 100,
+        "frame_height": 100,
+        "sprite_scale": 6,
+        "animation_speed": 0.1,
+        "max_hp": 300,
+        "damage": 22.0,
+        "speed": 56.0,
+        "movement": "chase",
+        "aggro_range": 520.0,
+        "attack_range": 88.0,
+        "attack_cooldown": 1.5,
+        "body_collider": {
+            "width": 48,
+            "height": 34,
+            "offset": [
+                0,
+                8
+            ]
+        },
+        "hurtbox": {
+            "width": 60,
+            "height": 72,
+            "offset": [
+                0,
+                0
+            ]
+        }
+    },
+    "orc_war": {
+        "sprite": "orc",
+        "frame_width": 100,
+        "frame_height": 100,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 110,
+        "damage": 16.0,
+        "speed": 68.0,
+        "movement": "chase",
+        "aggro_range": 420.0,
+        "attack_range": 58.0,
+        "attack_cooldown": 1.45,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                8
+            ]
+        },
+        "hurtbox": {
+            "width": 38,
+            "height": 46,
+            "offset": [
+                0,
+                0
+            ]
+        }
+    },
+    "skeleton_war": {
+        "sprite": "skeleton",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 180,
+        "damage": 22.0,
+        "speed": 52.0,
+        "movement": "chase",
+        "aggro_range": 420.0,
+        "attack_range": 52.0,
+        "attack_cooldown": 1.5,
+        "body_collider": {
+            "width": 36,
+            "height": 24,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 40,
+            "height": 45,
+            "offset": [
+                0,
+                20
+            ]
+        }
+    },
+    "vampire_war": {
+        "sprite": "vampire",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 240,
+        "damage": 26.0,
+        "speed": 68.0,
+        "movement": "chase",
+        "aggro_range": 440.0,
+        "attack_range": 52.0,
+        "attack_cooldown": 1.35,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 42,
+            "height": 58,
+            "offset": [
+                0,
+                10
+            ]
+        }
+    },
+    "vampire_war_elite": {
+        "sprite": "vampire",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 3,
+        "animation_speed": 0.1,
+        "max_hp": 320,
+        "damage": 34.0,
+        "speed": 80.0,
+        "movement": "chase",
+        "aggro_range": 480.0,
+        "attack_range": 52.0,
+        "attack_cooldown": 1.3,
+        "body_collider": {
+            "width": 34,
+            "height": 24,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 42,
+            "height": 58,
+            "offset": [
+                0,
+                10
+            ]
+        }
     }
 }

@@ -418,7 +418,12 @@ class Game:
         self.start_current_wave()
 
     def start_current_wave(self):
-        """Start the current wave. War survivors remain; new wave forces are added."""
+        """Start a wave using enemy IDs from the entity database.
+
+        Entity visuals, sizes, combat defaults, collision boxes, and hurtboxes
+        live in data/entities/enemies.json. Mission files only select IDs and
+        define encounter-level values such as counts, weights, and timing.
+        """
         wave = self.get_current_wave()
         if wave is None:
             self.complete_wave_mission()
@@ -431,25 +436,29 @@ class Game:
         self.wave_spawn_timer = float(wave.get("spawn_interval", 0.75))
 
         if self.mission_config.get("mode") == "elimination":
-            enemy_type = wave["enemy"]
-            minion_settings = wave["minions"]
-            boss_settings = wave["boss"]
+            boss_ref = wave.get("boss", {})
+            minion_ref = wave.get("minions", {})
+            boss_id = boss_ref.get("id")
+            minion_id = minion_ref.get("id")
 
-            # One large, tougher boss per wave.
+            if not boss_id or not minion_id:
+                raise ValueError(
+                    f"Wave {wave.get('wave')} must define boss.id and minions.id."
+                )
+
+            # One boss profile per wave. A boss may share its sprite with a
+            # minion while keeping independent scale/collider/hurtbox settings.
             self.spawn_mission_enemy(
-                enemy_type,
-                boss_settings,
+                boss_id,
                 name=f"Boss_Wave_{wave.get('wave', self.current_wave_index + 1)}",
                 is_boss=True,
             )
 
-            # Minions use the boss's same enemy sprite, at their normal scale.
-            count = int(minion_settings.get("count", 0))
+            count = int(minion_ref.get("count", 0))
             for number in range(count):
                 self.spawn_mission_enemy(
-                    enemy_type,
-                    minion_settings,
-                    name=f"{enemy_type.title()}_W{self.current_wave_index + 1}_{number + 1:02d}",
+                    minion_id,
+                    name=f"{minion_id.title()}_W{self.current_wave_index + 1}_{number + 1:02d}",
                     is_boss=False,
                 )
             return
@@ -465,17 +474,15 @@ class Game:
 
         # Final elimination wave intentionally spawns nothing.
 
-    def build_enemy_config(self, enemy_type, settings, is_boss=False):
-        """Combine an enemy's sprite/collider definition with fixed mission values."""
-        config = self.tilemap.entity_database.get("enemy", enemy_type)
-        config.update({key: value for key, value in settings.items() if key not in ("type", "weight", "count")})
-        config["hp"] = int(settings.get("hp", config.get("max_hp", 100)))
-        config["damage"] = float(settings.get("damage", config.get("damage", 10)))
-        config["speed"] = float(settings.get("speed", config.get("speed", 60)))
-        config["movement"] = settings.get("movement", "chase")
+    def build_enemy_config(self, enemy_id, is_boss=False):
+        """Resolve an enemy ID into its single source-of-truth entity profile."""
+        config = self.tilemap.entity_database.get("enemy", enemy_id)
+
+        # Aggression is intentionally mission-specific: First Assault uses
+        # proximity aggro, while War of Fallen Skies uses always-on pursuit.
         mission_behavior = self.mission_config.get("enemy_behavior", {})
-        config["aggro_mode"] = settings.get(
-            "aggro_mode", mission_behavior.get("aggro_mode", "proximity")
+        config["aggro_mode"] = mission_behavior.get(
+            "aggro_mode", config.get("aggro_mode", "proximity")
         )
         config["is_boss"] = bool(is_boss)
         return config
@@ -596,8 +603,8 @@ class Game:
             "atau naikkan nilai spawn.attempts/min_distance_from_player."
         )
 
-    def spawn_mission_enemy(self, enemy_type, settings, name, is_boss=False):
-        config = self.build_enemy_config(enemy_type, settings, is_boss=is_boss)
+    def spawn_mission_enemy(self, enemy_id, name, is_boss=False):
+        config = self.build_enemy_config(enemy_id, is_boss=is_boss)
         position = self.find_enemy_spawn_position(config)
         enemy = Enemy(
             x=position.x,
@@ -608,7 +615,7 @@ class Game:
         enemy.set_player(self.player)
         enemy.set_collisions(self.collisions)
         enemy.is_boss = is_boss
-        enemy.enemy_type = enemy_type
+        enemy.enemy_type = enemy_id
         self.enemies.append(enemy)
         self.player.set_enemies(self.enemies)
         return enemy
@@ -624,14 +631,15 @@ class Game:
 
     def spawn_random_wave_enemy(self, wave, suffix="Reinforcement"):
         entry = self.choose_wave_enemy(wave)
-        enemy_type = entry["type"]
-        enemy_settings = {
-            key: value
-            for key, value in entry.items()
-            if key not in ("type", "weight")
-        }
-        name = f"{enemy_type.title()}_W{self.current_wave_index + 1}_{suffix}"
-        return self.spawn_mission_enemy(enemy_type, enemy_settings, name, is_boss=False)
+        # `id` is the canonical mission field. `type` remains accepted for
+        # backward compatibility with older mission JSON files.
+        enemy_id = entry.get("id", entry.get("type"))
+        if not enemy_id:
+            raise ValueError(
+                f"Wave {wave.get('wave')} enemy entry is missing its 'id'."
+            )
+        name = f"{enemy_id.title()}_W{self.current_wave_index + 1}_{suffix}"
+        return self.spawn_mission_enemy(enemy_id, name, is_boss=False)
 
     def complete_wave_mission(self):
         self.mission_complete = True
