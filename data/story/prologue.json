@@ -1,11 +1,10 @@
 {
-    "id": "main_prologue",
-    "title": "The Beginning",
-    "pages": [
-        "Long before the kingdoms fell, the world lived in peace.",
-        "Ancient powers watched over the lands, protecting all living things.",
-        "But as time passed, mankind began to forget the old stories.",
-        "And deep beneath the earth, something began to awaken...",
-        "This is where our story begins."
-    ]
+  "id": "main_prologue",
+  "title": "The Fall of Lumerian",
+  "pages": [
+    "For centuries, the Lumerian Kingdom stood as one of the great powers of Florian Land.",
+    "Its people lived beneath the protection of its walls, unaware of the ancient terror approaching them.",
+    "From the darkness came Vorlithra, the three-headed Soul Devourer. Its arrival marked the beginning of the War of Fallen Skies.",
+    "As the kingdom called its champions to war, Leonhard von Evermont rode toward the outer city."
+  ]
 }

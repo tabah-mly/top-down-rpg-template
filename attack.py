@@ -24,17 +24,19 @@ class Attack:
 
         self.is_debug = False
 
-    def start(self):
+    def start(self, origin=None):
         self.progress = 0
         self.active = True
         self.has_hit = False
         self.hit_targets.clear()
 
-        surface = pygame.display.get_surface()
-        center = pygame.Vector2(surface.get_width() // 2, surface.get_height() // 2)
+        if origin is None:
+            surface = pygame.display.get_surface()
+            origin = (surface.get_width() // 2, surface.get_height() // 2)
 
+        origin = pygame.Vector2(origin)
         mx, my = pygame.mouse.get_pos()
-        vec = pygame.Vector2(mx, my) - center
+        vec = pygame.Vector2(mx, my) - origin
 
         if vec.length_squared() == 0:
             vec = pygame.Vector2(0, -1)

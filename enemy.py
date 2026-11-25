@@ -94,6 +94,11 @@ class Enemy:
 
         self.pause_duration = float(config.get("pause_duration", 1.5))
 
+        self.aggro_range = float(config.get("aggro_range", 280))
+        self.attack_range = float(config.get("attack_range", 48))
+        self.attack_cooldown = float(config.get("attack_cooldown", 1.4))
+        self.attack_timer = 0.0
+
         self.pause_timer = 0
 
         self.start_pos = self.pos.copy()
@@ -131,24 +136,48 @@ class Enemy:
         if not self.alive:
             return
 
+        self.attack_timer = max(0.0, self.attack_timer - dt)
+
+        # Finish the current attack animation before choosing another action.
         if self.state == "attack":
             self.animator.update(dt)
-
             if self.animator.finished:
                 self.set_animation("idle")
-
             return
 
-        if self.movement == "path":
+        if self.movement == "chase" and self.player is not None:
+            self.update_chase_movement(dt)
+        elif self.movement == "path":
             self.update_path_movement(dt)
-
         elif self.movement == "patrol":
             self.update_patrol_movement(dt)
-
         else:
             self.set_animation("idle")
 
         self.animator.update(dt)
+
+    def update_chase_movement(self, dt):
+        direction = self.player.pos - self.pos
+        distance = direction.length()
+
+        if distance > self.aggro_range:
+            self.set_animation("idle")
+            return
+
+        if abs(direction.x) > 1:
+            self.set_facing("right" if direction.x > 0 else "left")
+
+        if distance <= self.attack_range:
+            self.set_animation("idle")
+            if self.attack_timer <= 0:
+                self.start_attack()
+                self.player.take_damage(self.damage)
+                self.attack_timer = self.attack_cooldown
+            return
+
+        direction = direction.normalize()
+        moved = self.move(direction * self.speed * dt)
+        self.set_animation("walk" if moved else "idle")
 
     # ======================================================
     # Drawing
@@ -324,7 +353,7 @@ class Enemy:
         if not self.alive or not self.can_be_damaged:
             return
 
-        self.hp = max(0, self.hp - amount)
+        self.hp = max(0, self.hp - int(amount))
 
         print(f"{self.name} took {amount} damage. " f"HP: {self.hp}/{self.max_hp}")
 
@@ -333,6 +362,7 @@ class Enemy:
 
     def die(self):
         self.alive = False
+        self.can_be_damaged = False
         print(f"{self.name} died.")
 
     def start_attack(self):

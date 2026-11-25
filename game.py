@@ -70,6 +70,8 @@ class Game:
         ).convert_alpha()
 
         self.interact_icon = pygame.transform.scale_by(interact_icon, 2)
+        self.hud_font = self.font_manager.get("main", 20)
+        self.hud_small_font = self.font_manager.get("main", 15)
 
         # Application state
         self.state = "menu"
@@ -94,25 +96,28 @@ class Game:
         self.triggers = []
         self.collisions = []
         self.npcs = []
+        self.enemies = []
         self.player = None
+        self.mission_complete = False
 
-        self.debug_collisions = True
+        self.debug_collisions = False
 
     # ========================================================
     # GAME STATE
     # ========================================================
 
     def start_new_game(self):
-        """Initialize a fresh game world."""
+        """Start the first playable prologue mission as Leonhard."""
 
         self.tilemap = TiledMap(
-            "assets/maps/level0.tmx",
+            "assets/maps/prologue_first_assault.tmx",
             scale=2,
         )
 
         self.triggers = self.tilemap.load_triggers()
         self.collisions = self.tilemap.load_collisions()
         self.npcs = self.tilemap.load_npcs()
+        self.enemies = self.tilemap.load_enemies()
 
         self.camera.set_bounds(
             self.tilemap.width,
@@ -125,27 +130,36 @@ class Game:
             spawn_position.x,
             spawn_position.y,
             self.pointer,
+            character="leonhard",
         )
+        self.camera.follow(self.player.rect)
 
-        self.player.set_bounds(
-            self.tilemap.width,
-            self.tilemap.height,
-        )
+        self.pointer.ranged = False
+        self.pointer.is_active = True
 
+        self.player.set_bounds(self.tilemap.width, self.tilemap.height)
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
+        self.player.set_enemies(self.enemies)
 
         for npc in self.npcs:
             npc.set_player(self.player)
 
+        for enemy in self.enemies:
+            enemy.set_player(self.player)
+            enemy.set_collisions(self.collisions)
+
         self.dialog.active = False
         self.active_dialogue_context = None
 
+        # These systems remain available for later story missions, but the
+        # first combat slice does not start the unrelated forest quest.
         self.quest_manager.reset()
         self.story_state.reset()
         self.dialogue_manager.seen_dialogues.clear()
 
-        self.quest_manager.start_quest("survive_the_forest")
+        self.mission_complete = False
+        self.debug_collisions = False
         self.state = "playing"
 
     def handle_menu_action(self, action):
@@ -178,29 +192,29 @@ class Game:
         self.triggers = self.tilemap.load_triggers()
         self.collisions = new_map.load_collisions()
         self.npcs = self.tilemap.load_npcs()
+        self.enemies = self.tilemap.load_enemies()
 
-        self.camera.set_bounds(
-            new_map.width,
-            new_map.height,
-        )
+        self.camera.set_bounds(new_map.width, new_map.height)
 
         self.player.pos = pygame.Vector2(
             spawn.x * new_map.scale,
             spawn.y * new_map.scale,
         )
-
         self.player.rect.center = self.player.pos
-
-        self.player.set_bounds(
-            new_map.width,
-            new_map.height,
-        )
-
+        self.player.update_collision_boxes()
+        self.camera.follow(self.player.rect)
+        self.player.set_bounds(new_map.width, new_map.height)
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
+        self.player.set_enemies(self.enemies)
+        self.mission_complete = False
 
         for npc in self.npcs:
             npc.set_player(self.player)
+
+        for enemy in self.enemies:
+            enemy.set_player(self.player)
+            enemy.set_collisions(self.collisions)
 
     # ========================================================
     # INTERACTION
@@ -272,6 +286,12 @@ class Game:
             elif self.state == "playing":
                 self.handle_game_event(event)
 
+            elif self.state == "game_over" and event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.start_new_game()
+                elif event.key == pygame.K_ESCAPE:
+                    self.state = "menu"
+
     def handle_game_event(self, event):
         if event.type == pygame.KEYDOWN:
 
@@ -333,13 +353,22 @@ class Game:
         self.player.update(dt, self.camera)
         self.camera.follow(self.player.rect)
 
+        for enemy in self.enemies:
+            enemy.update(dt)
+
         for npc in self.npcs:
             npc.update(dt)
+
+        if self.player.stats["hp"] <= 0:
+            self.state = "game_over"
+            return
+
+        if self.enemies and not any(enemy.alive for enemy in self.enemies):
+            self.mission_complete = True
 
         for trigger in self.triggers:
             if trigger.update(self.player.body_collider.rect):
 
-                # Notify the quest system
                 if trigger.quest_event:
                     self.event_manager.emit(
                         trigger.quest_event,
@@ -374,13 +403,17 @@ class Game:
         elif self.state == "playing":
             self.draw_gameplay()
 
+        elif self.state == "game_over":
+            self.draw_game_over()
+
     def draw_gameplay(self):
         self.screen.fill((0, 0, 0))
-
         self.tilemap.draw(self.screen, self.camera)
 
-        nearby_npc = None
+        for enemy in self.enemies:
+            enemy.draw(self.screen, self.camera)
 
+        nearby_npc = None
         if not self.dialog.active:
             nearby_npc = self.get_nearby_npc()
 
@@ -394,38 +427,72 @@ class Game:
         self.player.draw(self.screen, self.camera)
 
         player_screen_pos = self.camera.apply(self.player.rect).center
-
-        self.pointer.draw(
-            self.screen,
-            player_screen_pos,
-        )
+        self.pointer.draw(self.screen, player_screen_pos)
 
         for trigger in self.triggers:
-            trigger.draw_debug(
-                self.screen,
-                self.camera,
-            )
+            trigger.draw_debug(self.screen, self.camera)
 
         self.dialog.draw(self.screen)
-
-        # Collision debug
-        for collision in self.collisions:
-            collision.draw_debug(
-                self.screen,
-                self.camera,
-            )
+        self.draw_hud()
 
         if self.debug_collisions:
-            self.player.draw_collision_debug(
-                self.screen,
-                self.camera,
-            )
+            for collision in self.collisions:
+                collision.draw_debug(self.screen, self.camera)
+
+            self.player.draw_collision_debug(self.screen, self.camera)
 
             for npc in self.npcs:
-                npc.draw_collision_debug(
-                    self.screen,
-                    self.camera,
-                )
+                npc.draw_collision_debug(self.screen, self.camera)
+
+            for enemy in self.enemies:
+                enemy.draw_collision_debug(self.screen, self.camera)
+
+    def draw_hud(self):
+        panel = pygame.Surface((330, 92), pygame.SRCALPHA)
+        panel.fill((12, 14, 20, 210))
+        self.screen.blit(panel, (20, 18))
+
+        title = self.hud_font.render("LEONHARD VON EVERMONT", True, (238, 226, 190))
+        self.screen.blit(title, (32, 26))
+
+        hp = self.player.stats["hp"]
+        max_hp = self.player.stats["max_hp"]
+        pygame.draw.rect(self.screen, (65, 35, 38), (32, 58, 220, 13))
+        hp_width = int(220 * hp / max_hp) if max_hp else 0
+        pygame.draw.rect(self.screen, (177, 61, 65), (32, 58, hp_width, 13))
+        hp_text = self.hud_small_font.render(f"HP {hp}/{max_hp}", True, (245, 240, 230))
+        self.screen.blit(hp_text, (260, 55))
+
+        remaining = sum(1 for enemy in self.enemies if enemy.alive)
+        objective = (
+            "AREA SECURED" if self.mission_complete
+            else f"OBJECTIVE: Defeat the invaders ({remaining} remaining)"
+        )
+        objective_surface = self.hud_small_font.render(objective, True, (238, 232, 215))
+        self.screen.blit(objective_surface, (24, self.screen_height - 34))
+
+        controls = self.hud_small_font.render(
+            "WASD: MOVE   LEFT CLICK: SWORD ATTACK",
+            True,
+            (205, 205, 195),
+        )
+        self.screen.blit(
+            controls,
+            controls.get_rect(bottomright=(self.screen_width - 22, self.screen_height - 18)),
+        )
+
+    def draw_game_over(self):
+        self.screen.fill((14, 12, 18))
+        title = self.font_manager.get("main", 54).render(
+            "LEONHARD HAS FALLEN", True, (220, 190, 170)
+        )
+        prompt = self.hud_font.render(
+            "Press R to retry  |  ESC to return to menu",
+            True,
+            (225, 220, 205),
+        )
+        self.screen.blit(title, title.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 35)))
+        self.screen.blit(prompt, prompt.get_rect(center=(self.screen_width // 2, self.screen_height // 2 + 35)))
 
     # ========================================================
     # MAIN LOOP
