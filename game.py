@@ -157,6 +157,7 @@ class Game:
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
         self.player.set_enemies(self.enemies)
+        self.player.reset_transient_combat_state()
 
         for npc in self.npcs:
             npc.set_player(self.player)
@@ -178,6 +179,9 @@ class Game:
 
     def begin_narrative(self, scene_number, next_action, pages=None):
         """Play one scene's narration, then continue to its next story step."""
+        if self.player is not None:
+            self.player.reset_transient_combat_state()
+
         scene = self.scenes_by_number.get(scene_number)
         if scene is None:
             raise ValueError(f"Adegan prolog nomor {scene_number} tidak ditemukan.")
@@ -325,6 +329,7 @@ class Game:
         self.player.set_collisions(self.collisions)
         self.player.set_npcs(self.npcs)
         self.player.set_enemies(self.enemies)
+        self.player.reset_transient_combat_state()
         self.mission_complete = False
         self.mission_phase = "active"
 
@@ -532,7 +537,19 @@ class Game:
                     self.dialog.open(trigger.message)
                     break
 
+    def sync_cursor_visibility(self):
+        """Show the system cursor outside active gameplay, including mission overlays."""
+        mission_overlay_visible = self.mission_phase in ("briefing", "complete")
+        should_be_visible = self.state != "playing" or mission_overlay_visible
+        if pygame.mouse.get_visible() != should_be_visible:
+            pygame.mouse.set_visible(should_be_visible)
+
     def draw(self):
+        # Cursor visibility follows the current game state, not the lifetime
+        # of the custom in-game pointer. This also restores the system cursor
+        # when returning to cinematics, menus, the game-over screen, or ending.
+        self.sync_cursor_visibility()
+
         if self.state == "opening":
             self.opening.draw(self.screen)
         elif self.state == "cinematic":
@@ -568,8 +585,9 @@ class Game:
             )
 
         self.player.draw(self.screen, self.camera)
-        player_screen_pos = self.camera.apply(self.player.rect).center
-        self.pointer.draw(self.screen, player_screen_pos)
+        if self.mission_phase == "active":
+            player_screen_pos = self.camera.apply(self.player.rect).center
+            self.pointer.draw(self.screen, player_screen_pos)
 
         for trigger in self.triggers:
             trigger.draw_debug(self.screen, self.camera)

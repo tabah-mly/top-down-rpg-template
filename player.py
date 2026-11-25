@@ -88,6 +88,26 @@ class Player:
     def set_enemies(self, enemies):
         self.enemies = enemies
 
+    def reset_transient_combat_state(self):
+        """Clear attack/input state before leaving or entering a scene."""
+        # An attack can be interrupted when gameplay pauses for a cinematic.
+        # Cancel it so the old swing does not resume on the next map.
+        self.attack.active = False
+        self.attack.progress = 0
+        self.attack.has_hit = False
+        self.attack.hit_targets.clear()
+
+        # Do not carry projectiles into another scene or map.
+        self.projectiles.clear()
+
+        # Synchronize the edge detector with the current mouse state. If a
+        # button is held during a transition, it must be released and pressed
+        # again before it can trigger an attack or toggle attack mode.
+        mouse = pygame.mouse.get_pressed()
+        self.prev_mouse_left = bool(mouse[0])
+        self.prev_mouse_right = bool(mouse[2])
+        self.aiming = False
+
     def set_collisions(self, collisions):
         self.collisions = collisions
 
