@@ -18,17 +18,17 @@
         "hp": 300,
         "damage": 22,
         "speed": 56,
-        "sprite_scale": 3,
+        "sprite_scale": 6,
         "movement": "chase",
         "aggro_range": 520,
-        "attack_range": 68,
+        "attack_range": 88,
         "attack_cooldown": 1.5,
         "body_collider": {
           "width": 48,
           "height": 34,
           "offset": [
             0,
-            48
+            8
           ]
         },
         "hurtbox": {
@@ -36,7 +36,7 @@
           "height": 72,
           "offset": [
             0,
-            30
+            0
           ]
         }
       },
@@ -45,7 +45,7 @@
         "hp": 110,
         "damage": 12,
         "speed": 68,
-        "sprite_scale": 2,
+        "sprite_scale": 3,
         "movement": "chase",
         "aggro_range": 420,
         "attack_range": 58,
@@ -55,15 +55,15 @@
           "height": 24,
           "offset": [
             0,
-            42
+            8
           ]
         },
         "hurtbox": {
-          "width": 42,
-          "height": 50,
+          "width": 38,
+          "height": 46,
           "offset": [
             0,
-            22
+            0
           ]
         }
       }
@@ -72,20 +72,20 @@
       "wave": 2,
       "enemy": "orc",
       "boss": {
-        "hp": 360,
-        "damage": 24,
-        "speed": 58,
-        "sprite_scale": 3,
+        "hp": 300,
+        "damage": 22,
+        "speed": 56,
+        "sprite_scale": 6,
         "movement": "chase",
         "aggro_range": 520,
-        "attack_range": 68,
+        "attack_range": 88,
         "attack_cooldown": 1.5,
         "body_collider": {
           "width": 48,
           "height": 34,
           "offset": [
             0,
-            48
+            8
           ]
         },
         "hurtbox": {
@@ -93,16 +93,16 @@
           "height": 72,
           "offset": [
             0,
-            30
+            0
           ]
         }
       },
       "minions": {
-        "count": 20,
+        "count": 15,
         "hp": 110,
         "damage": 12,
         "speed": 68,
-        "sprite_scale": 2,
+        "sprite_scale": 3,
         "movement": "chase",
         "aggro_range": 420,
         "attack_range": 58,
@@ -112,15 +112,15 @@
           "height": 24,
           "offset": [
             0,
-            42
+            8
           ]
         },
         "hurtbox": {
-          "width": 42,
-          "height": 50,
+          "width": 38,
+          "height": 46,
           "offset": [
             0,
-            22
+            0
           ]
         }
       }
@@ -129,20 +129,20 @@
       "wave": 3,
       "enemy": "orc",
       "boss": {
-        "hp": 420,
-        "damage": 26,
-        "speed": 60,
-        "sprite_scale": 3,
+        "hp": 300,
+        "damage": 22,
+        "speed": 56,
+        "sprite_scale": 6,
         "movement": "chase",
         "aggro_range": 520,
-        "attack_range": 68,
+        "attack_range": 88,
         "attack_cooldown": 1.5,
         "body_collider": {
           "width": 48,
           "height": 34,
           "offset": [
             0,
-            48
+            8
           ]
         },
         "hurtbox": {
@@ -150,16 +150,16 @@
           "height": 72,
           "offset": [
             0,
-            30
+            0
           ]
         }
       },
       "minions": {
-        "count": 25,
+        "count": 15,
         "hp": 110,
         "damage": 12,
         "speed": 68,
-        "sprite_scale": 2,
+        "sprite_scale": 3,
         "movement": "chase",
         "aggro_range": 420,
         "attack_range": 58,
@@ -169,15 +169,15 @@
           "height": 24,
           "offset": [
             0,
-            42
+            8
           ]
         },
         "hurtbox": {
-          "width": 42,
-          "height": 50,
+          "width": 38,
+          "height": 46,
           "offset": [
             0,
-            22
+            0
           ]
         }
       }
@@ -186,20 +186,20 @@
       "wave": 4,
       "enemy": "orc",
       "boss": {
-        "hp": 500,
-        "damage": 28,
-        "speed": 62,
-        "sprite_scale": 3,
+        "hp": 300,
+        "damage": 22,
+        "speed": 56,
+        "sprite_scale": 6,
         "movement": "chase",
         "aggro_range": 520,
-        "attack_range": 68,
+        "attack_range": 88,
         "attack_cooldown": 1.5,
         "body_collider": {
           "width": 48,
           "height": 34,
           "offset": [
             0,
-            48
+            8
           ]
         },
         "hurtbox": {
@@ -207,16 +207,16 @@
           "height": 72,
           "offset": [
             0,
-            30
+            0
           ]
         }
       },
       "minions": {
-        "count": 30,
+        "count": 15,
         "hp": 110,
         "damage": 12,
         "speed": 68,
-        "sprite_scale": 2,
+        "sprite_scale": 3,
         "movement": "chase",
         "aggro_range": 420,
         "attack_range": 58,
@@ -226,15 +226,15 @@
           "height": 24,
           "offset": [
             0,
-            42
+            8
           ]
         },
         "hurtbox": {
-          "width": 42,
-          "height": 50,
+          "width": 38,
+          "height": 46,
           "offset": [
             0,
-            22
+            0
           ]
         }
       }

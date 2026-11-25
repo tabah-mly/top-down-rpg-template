@@ -34,15 +34,15 @@
             "height": 24,
             "offset": [
               0,
-              42
+              8
             ]
           },
           "hurtbox": {
-            "width": 42,
-            "height": 50,
+            "width": 38,
+            "height": 46,
             "offset": [
               0,
-              22
+              0
             ]
           }
         }
