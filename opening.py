@@ -159,7 +159,7 @@ class OpeningSequence:
             surface.blit(title_surface, title_rect)
 
             prompt = self.prompt_font.render(
-                "SPACE  -  BEGIN",
+                "SPASI  -  MULAI",
                 True,
                 self.prompt_color,
             )
@@ -190,7 +190,7 @@ class OpeningSequence:
                 surface.blit(text_surface, text_rect)
 
             prompt = self.prompt_font.render(
-                "SPACE  -  CONTINUE",
+                "SPASI  -  LANJUTKAN",
                 True,
                 self.prompt_color,
             )

@@ -99,6 +99,7 @@ class Game:
         self.enemies = []
         self.player = None
         self.mission_complete = False
+        self.mission_phase = "idle"
 
         self.debug_collisions = False
 
@@ -159,6 +160,7 @@ class Game:
         self.dialogue_manager.seen_dialogues.clear()
 
         self.mission_complete = False
+        self.mission_phase = "briefing"
         self.debug_collisions = False
         self.state = "playing"
 
@@ -208,6 +210,7 @@ class Game:
         self.player.set_npcs(self.npcs)
         self.player.set_enemies(self.enemies)
         self.mission_complete = False
+        self.mission_phase = "active"
 
         for npc in self.npcs:
             npc.set_player(self.player)
@@ -293,19 +296,33 @@ class Game:
                     self.state = "menu"
 
     def handle_game_event(self, event):
-        if event.type == pygame.KEYDOWN:
+        if event.type != pygame.KEYDOWN:
+            return
 
-            if self.dialog.active:
-                if event.key in (pygame.K_SPACE, pygame.K_RETURN):
-                    was_active = self.dialog.active
+        # Mission briefing pauses gameplay until the player is ready.
+        if self.mission_phase == "briefing":
+            if event.key in (pygame.K_SPACE, pygame.K_RETURN):
+                self.mission_phase = "active"
+            return
 
-                    self.dialog.advance()
+        # Keep the completed mission on screen until the player chooses what to do.
+        if self.mission_phase == "complete":
+            if event.key == pygame.K_r:
+                self.start_new_game()
+            elif event.key == pygame.K_ESCAPE:
+                self.state = "menu"
+            return
 
-                    if was_active and not self.dialog.active:
-                        self.on_dialogue_completed()
+        if self.dialog.active:
+            if event.key in (pygame.K_SPACE, pygame.K_RETURN):
+                was_active = self.dialog.active
+                self.dialog.advance()
 
-            elif event.key == pygame.K_e:
-                self.interact_with_npc()
+                if was_active and not self.dialog.active:
+                    self.on_dialogue_completed()
+
+        elif event.key == pygame.K_e:
+            self.interact_with_npc()
 
     def on_dialogue_completed(self):
         context = self.active_dialogue_context
@@ -347,7 +364,7 @@ class Game:
         if self.state != "playing":
             return
 
-        if self.dialog.active:
+        if self.dialog.active or self.mission_phase != "active":
             return
 
         self.player.update(dt, self.camera)
@@ -365,6 +382,7 @@ class Game:
 
         if self.enemies and not any(enemy.alive for enemy in self.enemies):
             self.mission_complete = True
+            self.mission_phase = "complete"
 
         for trigger in self.triggers:
             if trigger.update(self.player.body_collider.rect):
@@ -435,6 +453,9 @@ class Game:
         self.dialog.draw(self.screen)
         self.draw_hud()
 
+        if self.mission_phase in ("briefing", "complete"):
+            self.draw_mission_overlay()
+
         if self.debug_collisions:
             for collision in self.collisions:
                 collision.draw_debug(self.screen, self.camera)
@@ -460,19 +481,16 @@ class Game:
         pygame.draw.rect(self.screen, (65, 35, 38), (32, 58, 220, 13))
         hp_width = int(220 * hp / max_hp) if max_hp else 0
         pygame.draw.rect(self.screen, (177, 61, 65), (32, 58, hp_width, 13))
-        hp_text = self.hud_small_font.render(f"HP {hp}/{max_hp}", True, (245, 240, 230))
+        hp_text = self.hud_small_font.render(f"NYAWA {hp}/{max_hp}", True, (245, 240, 230))
         self.screen.blit(hp_text, (260, 55))
 
         remaining = sum(1 for enemy in self.enemies if enemy.alive)
-        objective = (
-            "AREA SECURED" if self.mission_complete
-            else f"OBJECTIVE: Defeat the invaders ({remaining} remaining)"
-        )
+        objective = f"SASARAN: Usir para penyerbu ({remaining} tersisa)"
         objective_surface = self.hud_small_font.render(objective, True, (238, 232, 215))
         self.screen.blit(objective_surface, (24, self.screen_height - 34))
 
         controls = self.hud_small_font.render(
-            "WASD: MOVE   LEFT CLICK: SWORD ATTACK",
+            "WASD: GERAK   KLIK KIRI: SERANG",
             True,
             (205, 205, 195),
         )
@@ -481,13 +499,82 @@ class Game:
             controls.get_rect(bottomright=(self.screen_width - 22, self.screen_height - 18)),
         )
 
+    def draw_mission_overlay(self):
+        overlay = pygame.Surface(
+            (self.screen_width, self.screen_height),
+            pygame.SRCALPHA,
+        )
+        overlay.fill((5, 7, 12, 175))
+        self.screen.blit(overlay, (0, 0))
+
+        panel_width = min(660, self.screen_width - 48)
+        panel_height = 250
+        panel = pygame.Rect(0, 0, panel_width, panel_height)
+        panel.center = (self.screen_width // 2, self.screen_height // 2)
+
+        pygame.draw.rect(
+            self.screen,
+            (18, 22, 30),
+            panel,
+            border_radius=12,
+        )
+        pygame.draw.rect(
+            self.screen,
+            (190, 158, 91),
+            panel,
+            width=2,
+            border_radius=12,
+        )
+
+        if self.mission_phase == "briefing":
+            eyebrow = "PROLOG  /  MISI 01"
+            title = "PENYERBUAN PERTAMA"
+            description = "Usir empat penyerbu dari persimpangan kota luar."
+            prompt = "TEKAN ENTER ATAU SPASI UNTUK MEMULAI"
+        else:
+            eyebrow = "PROLOG  /  MISI 01 SELESAI"
+            title = "KOTA LUAR AMAN"
+            description = "Para penyerbu berhasil dipukul mundur. Persimpangan kini aman."
+            prompt = "R: ULANGI MISI     ESC: KEMBALI KE MENU"
+
+        eyebrow_font = self.font_manager.get("main", 17)
+        title_font = self.font_manager.get("main", 43)
+        description_font = self.font_manager.get("main", 19)
+        prompt_font = self.font_manager.get("main", 16)
+
+        eyebrow_surface = eyebrow_font.render(eyebrow, True, (202, 178, 126))
+        title_surface = title_font.render(title, True, (244, 232, 204))
+        description_surface = description_font.render(
+            description,
+            True,
+            (220, 220, 214),
+        )
+        prompt_surface = prompt_font.render(prompt, True, (232, 196, 120))
+
+        self.screen.blit(
+            eyebrow_surface,
+            eyebrow_surface.get_rect(center=(panel.centerx, panel.top + 42)),
+        )
+        self.screen.blit(
+            title_surface,
+            title_surface.get_rect(center=(panel.centerx, panel.top + 96)),
+        )
+        self.screen.blit(
+            description_surface,
+            description_surface.get_rect(center=(panel.centerx, panel.top + 158)),
+        )
+        self.screen.blit(
+            prompt_surface,
+            prompt_surface.get_rect(center=(panel.centerx, panel.bottom - 38)),
+        )
+
     def draw_game_over(self):
         self.screen.fill((14, 12, 18))
         title = self.font_manager.get("main", 54).render(
-            "LEONHARD HAS FALLEN", True, (220, 190, 170)
+            "LEONHARD TELAH GUGUR", True, (220, 190, 170)
         )
         prompt = self.hud_font.render(
-            "Press R to retry  |  ESC to return to menu",
+            "Tekan R untuk mencoba lagi  |  ESC untuk kembali ke menu",
             True,
             (225, 220, 205),
         )

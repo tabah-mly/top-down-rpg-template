@@ -3,7 +3,7 @@
         "forest_clearing": {
             "event": "enter",
             "action": "print",
-            "message": "Player entered the forest clearing.",
+            "message": "Pemain memasuki lapangan terbuka di hutan.",
             "once": true,
             "quest_event": "location_entered",
             "quest_target": "forest_clearing"

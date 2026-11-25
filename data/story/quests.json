@@ -1,18 +1,18 @@
 {
     "survive_the_forest": {
         "id": "survive_the_forest",
-        "title": "Survive the Forest",
-        "description": "Find a way to survive in the forest.",
+        "title": "Bertahan Hidup di Hutan",
+        "description": "Temukan cara untuk bertahan hidup di hutan.",
         "objectives": [
             {
                 "id": "find_shelter",
-                "description": "Find shelter in the forest.",
+                "description": "Temukan tempat berlindung di hutan.",
                 "event": "location_entered",
                 "target": "forest_clearing"
             },
             {
                 "id": "meet_the_elf",
-                "description": "Meet the person who rescued you.",
+                "description": "Temui orang yang telah menyelamatkanmu.",
                 "event": "npc_interacted",
                 "target": "forest_elf"
             }
@@ -20,18 +20,18 @@
     },
     "find_favorite_food": {
         "id": "find_favorite_food",
-        "title": "A Meal to Remember",
-        "description": "Find the elf's favorite food.",
+        "title": "Santapan yang Tak Terlupakan",
+        "description": "Temukan makanan kesukaan sang elf.",
         "objectives": [
             {
                 "id": "find_ingredient",
-                "description": "Find the required ingredient.",
+                "description": "Temukan bahan yang dibutuhkan.",
                 "event": "item_collected",
                 "target": "special_ingredient"
             },
             {
                 "id": "return_to_elf",
-                "description": "Return to the elf.",
+                "description": "Kembali dan temui sang elf.",
                 "event": "npc_interacted",
                 "target": "forest_elf"
             }

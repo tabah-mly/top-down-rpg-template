@@ -1,25 +1,25 @@
 {
     "merchant_intro": {
-        "speaker": "Village Merchant",
+        "speaker": "Pedagang Desa",
         "lines": [
-            "Welcome, traveler!",
-            "Looking for something special?",
-            "I've got plenty of goods to offer."
+            "Selamat datang, pengelana!",
+            "Sedang mencari sesuatu yang istimewa?",
+            "Aku punya banyak barang untuk ditawarkan."
         ]
     },
     "christopher_intro": {
         "speaker": "Christopher",
         "lines": [
-            "Oh, hello there.",
-            "The village has been unusually quiet lately.",
-            "Something doesn't feel right..."
+            "Oh, halo.",
+            "Akhir-akhir ini desa terasa begitu sunyi.",
+            "Ada sesuatu yang terasa tidak beres..."
         ]
     },
     "dansi_2_intro": {
         "speaker": "Dansi",
         "lines": [
-            "Good day!",
-            "It's a beautiful day, isn't it?"
+            "Selamat pagi!",
+            "Hari ini begitu cerah, bukan?"
         ]
     },
     "leonhard_intro": {
@@ -31,32 +31,32 @@
     "christopher_after_shelter": {
         "speaker": "Christopher",
         "lines": [
-            "Ah, there you are.",
-            "I heard you managed to find a safe place.",
-            "Be careful out there. The forest isn't as peaceful as it looks."
+            "Ah, akhirnya kau kembali.",
+            "Kudengar kau berhasil menemukan tempat berlindung.",
+            "Hati-hati di luar sana. Hutan ini tidak seaman kelihatannya."
         ]
     },
     "christopher_after_meeting": {
         "speaker": "Christopher",
         "lines": [
-            "Ah, there you are.",
-            "I see you've come back.",
-            "Is there something you need?"
+            "Ah, di sini rupanya kau.",
+            "Sepertinya kau kembali lagi.",
+            "Ada yang bisa kubantu?"
         ]
     },
     "christopher_knows_about_curse": {
         "speaker": "Christopher",
         "lines": [
-            "Wait... you know about the curse?",
-            "There are things about your past that you don't understand.",
-            "Perhaps it's time I told you the truth."
+            "Tunggu... kau sudah tahu tentang kutukan itu?",
+            "Ada banyak hal tentang masa lalumu yang belum kau pahami.",
+            "Mungkin sudah waktunya aku mengatakan yang sebenarnya."
         ]
     },
     "christopher_repeat": {
         "speaker": "Christopher",
         "lines": [
-            "Is there anything else you need?",
-            "Take care of yourself out there."
+            "Apakah masih ada yang kau perlukan?",
+            "Jaga dirimu baik-baik di luar sana."
         ]
     }
 }

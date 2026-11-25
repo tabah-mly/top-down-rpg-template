@@ -16,9 +16,9 @@ class MainMenu:
         self.overlay.fill((0, 0, 0, 110))
 
         self.options = [
-            {"label": "New Game", "action": "new_game", "enabled": True},
-            {"label": "Continue", "action": "continue", "enabled": False},
-            {"label": "Exit", "action": "exit", "enabled": True},
+            {"label": "Mulai Permainan", "action": "new_game", "enabled": True},
+            {"label": "Lanjutkan", "action": "continue", "enabled": False},
+            {"label": "Keluar", "action": "exit", "enabled": True},
         ]
 
         self.selected_index = 0
@@ -138,7 +138,7 @@ class MainMenu:
         surface.blit(self.overlay, (0, 0))
 
         # Title
-        title = self.title_font.render("Top Down RPG", True, (235, 220, 180))
+        title = self.title_font.render("RPG Tampak Atas", True, (235, 220, 180))
 
         title_rect = title.get_rect(
             center=(self.screen_width // 2, self.screen_height // 3)

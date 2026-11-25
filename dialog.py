@@ -138,7 +138,7 @@ class DialogWindow:
 
         # Continue prompt
         prompt = self.prompt_font.render(
-            "SPACE/ENTER",
+            "SPASI/ENTER",
             True,
             (210, 210, 220),
         )

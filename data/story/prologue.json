@@ -1,10 +1,265 @@
 {
-  "id": "main_prologue",
-  "title": "The Fall of Lumerian",
-  "pages": [
-    "For centuries, the Lumerian Kingdom stood as one of the great powers of Florian Land.",
-    "Its people lived beneath the protection of its walls, unaware of the ancient terror approaching them.",
-    "From the darkness came Vorlithra, the three-headed Soul Devourer. Its arrival marked the beginning of the War of Fallen Skies.",
-    "As the kingdom called its champions to war, Leonhard von Evermont rode toward the outer city."
-  ]
+    "id": "main_prologue",
+    "title": "Runtuhnya Kerajaan Lumerian",
+    "pages": [
+        "Di Daratan Florian berdiri Kerajaan Lumerian, sebuah kerajaan yang telah bertahan selama berabad-abad dan dikenal sebagai tanah para pahlawan serta kesatria.",
+        "Namun, kejayaan itu terancam ketika Vorlithra, Sang Pemangsa Jiwa, muncul dari kegelapan. Naga berkepala tiga itu membawa kekuatan kutukan yang bahkan tak mampu ditandingi para pahlawan.",
+        "Kedatangannya menjadi awal dari Perang Langit yang Runtuh—perang yang akan mengubah nasib Lumerian dan keluarga von Evermont untuk selamanya."
+    ],
+    "characters": [
+        {
+            "id": "leonardo_schrodinger_von_evermont",
+            "name": "Leonardo Schrüdinger von Evermont",
+            "role": "Tokoh utama dalam kisah utama setelah prolog. Dalam prolog, Leonardo masih bayi; setelah ritual penyegelan, usianya bertambah sepuluh tahun secara tiba-tiba.",
+            "birthplace": "Kerajaan Lumerian, Daratan Florian",
+            "blood_type": "A",
+            "height_cm": 181,
+            "personality": [
+                "Strategis",
+                "Memiliki semangat juang tinggi",
+                "Loyal terhadap masyarakatnya",
+                "Cerdas"
+            ],
+            "family": {
+                "father": "Leonhard von Evermont",
+                "mother": "Diana Agartha",
+                "paternal_grandfather": "Leopold Aldric von Evermont"
+            },
+            "inheritance": "Mewarisi kekuatan dari kakeknya, Leopold Aldric von Evermont. Dalam rancangan cerita sebelumnya, warisan ini disebut sebagai kekuatan kutukan kegelapan; sifat dan asal-usul pastinya masih perlu dipastikan."
+        },
+        {
+            "id": "leonhard_von_evermont",
+            "name": "Leonhard von Evermont",
+            "role": "Ayah Leonardo dan salah satu pahlawan paling dihormati di Kerajaan Lumerian setelah Leopold Aldric von Evermont. Ia memimpin Divisi Kelima, Kesatria Suci, dalam Perang Langit yang Runtuh.",
+            "birthplace": "Utero Village, Rain Forest, Daratan Florian",
+            "blood_type": "AB",
+            "family": {
+                "father": "Leopold Aldric von Evermont",
+                "son": "Leonardo Schrüdinger von Evermont",
+                "mother_of_child": "Diana Agartha"
+            },
+            "background": [
+                "Saat remaja, Leonhard bekerja sebagai petani di Utero Village.",
+                "Ketika desa tersebut diserang para demon, ia mengevakuasi diri dan meninggalkan desa.",
+                "Ia kemudian pindah ke Kerajaan Lumerian sebagai petualang dan bertekad mengikuti jejak ayahnya sebagai kesatria."
+            ],
+            "legacy": "Leonhard dikenang sebagai tokoh utama dalam Perang Langit yang Runtuh. Ia memimpin Divisi Kelima, Kesatria Suci, dalam perang melawan Vorlithra. Setelah pasukan Lumerian terpaksa mundur, ia mengorbankan sisa kekuatannya untuk menyegel kekuatan yang diwarisi Leonardo."
+        },
+        {
+            "id": "leopold_aldric_von_evermont",
+            "name": "Leopold Aldric von Evermont",
+            "role": "Ayah Leonhard dan kakek dari pihak ayah Leonardo.",
+            "titles": [
+                "Salah satu dari Lima Kesatria Agung"
+            ],
+            "personality": [
+                "Tegas",
+                "Strategis",
+                "Sangat dihormati rakyatnya"
+            ],
+            "family": {
+                "son": "Leonhard von Evermont",
+                "grandson": "Leonardo Schrüdinger von Evermont"
+            },
+            "legacy": "Leopold adalah tokoh utama dalam peristiwa bersejarah The Last Dawn of Heroes. Ia merupakan salah satu dari tiga pahlawan yang gugur dalam peristiwa tersebut. Kekuatan yang diwarisi Leonardo berasal dari garis keluarga Leopold."
+        },
+        {
+            "id": "diana_agartha",
+            "name": "Diana Agartha",
+            "role": "Ibu Leonardo. Ia dievakuasi dari Lumerian ke kerajaan lain demi keselamatannya setelah Leonardo lahir."
+        },
+        {
+            "id": "serana_anys_seiveira",
+            "name": "Serana Anys Seiveira",
+            "nickname": "Serana",
+            "role": "Teman masa kecil Leonardo. Serana adalah karakter tersendiri dan bukan kekasih ataupun ibu Leonardo.",
+            "birthplace": "Kerajaan Lumerian, Daratan Florian",
+            "blood_type": "D",
+            "family": {
+                "mother": "Lyra Seiveira",
+                "father": "Kaelen Ravenshire"
+            },
+            "background": [
+                "Berasal dari keluarga bangsawan yang cukup dikenal di kerajaan.",
+                "Seorang petualang yang menjelajahi berbagai negara untuk mencari batu-batu sihir yang tersebar.",
+                "Ia ingin memperoleh kekuatan dari batu-batu sihir tersebut agar dapat melindungi Kerajaan Lumerian dari ancaman berbahaya."
+            ]
+        },
+        {
+            "id": "christopher_wald_ramses",
+            "name": "Christopher Wald Ramses",
+            "nickname": "Ramses",
+            "role": "Saudara jauh Leonardo dari garis keluarga von Evermont.",
+            "birthplace": "Emerald Lowlands, Kingdom of Everchest",
+            "appearance": {
+                "hairstyle": "Side-swept, dengan poni menyamping",
+                "impression": "Muda dan karismatik",
+                "eyes": "Almond eyes, sedikit kecokelatan"
+            },
+            "family": {
+                "grandfather": "Saudara kandung Leopold Aldric von Evermont",
+                "father": "Seorang adipati di Kingdom of Everchest"
+            }
+        },
+        {
+            "id": "novachronos",
+            "name": "Novachronos",
+            "role": "Pemimpin Divisi Pertama, Penjaga Istana."
+        },
+        {
+            "id": "julius_niverein",
+            "name": "Julius Niverein",
+            "role": "Pemimpin Divisi Kedua, Pasukan Garis Depan."
+        },
+        {
+            "id": "albert_flevance",
+            "name": "Albert Fle’vance",
+            "role": "Pemimpin Divisi Ketiga, Kavaleri Kerajaan."
+        },
+        {
+            "id": "michael_vengeance",
+            "name": "Michael Vengeance",
+            "role": "Pemimpin Divisi Keempat, Pasukan Rahasia."
+        },
+        {
+            "id": "vorlithra",
+            "name": "Vorlithra",
+            "title": "Sang Pemangsa Jiwa (The Soul Devourer)",
+            "role": "Naga berkepala tiga yang menjadi ancaman terbesar bagi umat manusia. Ketiga kepalanya melambangkan Kutukan, Kematian, dan Kekuasaan."
+        }
+    ],
+    "scenes": [
+        {
+            "number": 1,
+            "id": "florian_land",
+            "title": "Daratan Florian",
+            "presentation": "cinematic",
+            "narration": [
+                "Di Daratan Florian berdiri Kerajaan Lumerian, sebuah kerajaan yang telah bertahan selama berabad-abad. Negeri ini dikenal sebagai tanah para pahlawan dan kesatria—mereka yang telah mengabdikan hidup untuk melindungi rakyat dan menjaga kedamaian.",
+                "Namun, di balik kejayaan itu, sebuah ancaman kuno mulai bangkit. Makhluk yang paling ditakuti umat manusia kembali hadir: seekor naga dengan kekuatan kutukan yang begitu besar hingga para pahlawan sekalipun tak mampu menandinginya.",
+                "Makhluk itu dikenal sebagai Vorlithra, Sang Pemangsa Jiwa (The Soul Devourer). Ia memiliki tiga kepala yang melambangkan Kutukan, Kematian, dan Kekuasaan. Bagi umat manusia, Vorlithra adalah perwujudan dari ketakutan dan keputusasaan."
+            ]
+        },
+        {
+            "number": 2,
+            "id": "the_first_assault",
+            "title": "Awal Mula Perang",
+            "presentation": "playable",
+            "mission_id": "mission_01_first_assault",
+            "narration": [
+                "Pada hari itu, kedamaian Lumerian hancur. Kerajaan yang dahulu dipenuhi kebahagiaan, canda, dan tawa berubah menjadi tempat yang kelam dan mencekam. Serangan Vorlithra beserta pasukan iblisnya menyapu wilayah kerajaan.",
+                "Seluruh pasukan dikerahkan untuk mempertahankan negeri. Para pemimpin kerajaan turun tangan memimpin pertahanan, tetapi kekuatan musuh jauh melampaui perkiraan. Prajurit dan pemimpin gugur satu demi satu, sementara pertahanan kerajaan perlahan runtuh.",
+                "Di tengah kehancuran itu, sang raja masih bertahan cukup lama untuk memanggil lima kesatria terkuat kerajaan. Mereka menjadi harapan terakhir Lumerian."
+            ],
+            "objective": "Usir para penyerbu dari persimpangan kota luar."
+        },
+        {
+            "number": 3,
+            "id": "the_five_legendary_knights",
+            "title": "Lima Kesatria Legendaris",
+            "presentation": "cinematic",
+            "narration": [
+                "Ketika Lumerian berada di ambang kemusnahan, sang raja memanggil lima kesatria yang namanya telah dikenal di seluruh kerajaan. Masing-masing memimpin satu divisi dengan kemampuan dan tugas yang berbeda.",
+                "Sang raja menyerahkan harapan terakhir kerajaan kepada kelima kesatria tersebut. Tak lama setelah itu, ia gugur ketika pertahanan istana kembali diserang."
+            ],
+            "divisions": [
+                {
+                    "number": 1,
+                    "leader": "Novachronos",
+                    "symbol": "Bintang 1",
+                    "name": "Divisi Pertama — Penjaga Istana",
+                    "description": "Pasukan elit yang bertugas melindungi raja, keluarga kerajaan, dan istana. Anggotanya dipilih dari para petarung terbaik di seluruh kerajaan."
+                },
+                {
+                    "number": 2,
+                    "leader": "Julius Niverein",
+                    "symbol": "Bintang 2",
+                    "name": "Divisi Kedua — Pasukan Garis Depan",
+                    "description": "Pasukan penyerang yang memimpin pertempuran di garis depan dan menerobos pertahanan musuh. Mereka dikenal karena keberanian dan keganasan dalam pertempuran."
+                },
+                {
+                    "number": 3,
+                    "leader": "Albert Fle’vance",
+                    "symbol": "Bintang 3",
+                    "name": "Divisi Ketiga — Kavaleri Kerajaan",
+                    "description": "Pasukan berkuda yang mengandalkan kecepatan, manuver, dan serangan mendadak untuk menguasai medan perang."
+                },
+                {
+                    "number": 4,
+                    "leader": "Michael Vengeance",
+                    "symbol": "Bintang 4",
+                    "name": "Divisi Keempat — Pasukan Rahasia",
+                    "description": "Pasukan khusus yang menjalankan misi pengintaian, infiltrasi, dan kontraintelijen. Keberadaan mereka bahkan tidak diketahui oleh sebagian besar rakyat."
+                },
+                {
+                    "number": 5,
+                    "leader": "Leonhard von Evermont",
+                    "symbol": "Bintang 5 — Pemimpin",
+                    "name": "Divisi Kelima — Kesatria Suci",
+                    "description": "Pasukan yang bertugas menghadapi naga, iblis, kutukan, dan makhluk supernatural. Mereka memadukan ilmu pedang dengan sihir suci."
+                }
+            ]
+        },
+        {
+            "number": 4,
+            "id": "the_orders_of_leonhard",
+            "title": "Perintah Leonhard",
+            "presentation": "cinematic",
+            "narration": [
+                "Setelah menerima tanggung jawab untuk memimpin pertahanan, Leonhard segera membagi tugas kepada keempat divisi lainnya. Tidak ada waktu untuk menyusun rencana panjang. Setiap pasukan harus bergerak sebelum kerajaan benar-benar jatuh.",
+                "Divisi Pertama semula bertugas menjaga raja, keluarga kerajaan, dan istana. Setelah sang raja gugur, tugas mereka berlanjut untuk melindungi keluarga kerajaan serta pusat pertahanan yang tersisa. Divisi Kedua memimpin serangan di garis depan. Divisi Ketiga bergerak sebagai kavaleri untuk melakukan manuver dan serangan mendadak. Divisi Keempat mengumpulkan informasi serta mengawasi pergerakan musuh dari balik bayangan.",
+                "Sementara itu, Leonhard memimpin Divisi Kelima untuk menghadapi ancaman terbesar: Vorlithra dan pasukan iblis yang menyertainya."
+            ]
+        },
+        {
+            "number": 5,
+            "id": "the_war_of_fallen_skies",
+            "title": "Perang Langit yang Runtuh",
+            "presentation": "cinematic_and_playable",
+            "narration": [
+                "Perang besar pun dimulai. Kelima divisi menjalankan tugas masing-masing, bertempur dengan seluruh kemampuan yang mereka miliki. Namun, setiap kemenangan kecil harus dibayar dengan kehilangan yang semakin besar.",
+                "Pasukan demi pasukan gugur. Serangan Divisi Kedua tak mampu menghentikan laju musuh. Kecepatan dan manuver Divisi Ketiga mulai kehilangan arti di tengah jumlah iblis yang terus berdatangan. Divisi Keempat kehilangan banyak anggotanya dalam misi pengintaian, sementara Divisi Kelima terus mengerahkan sihir suci untuk menghadapi kutukan Vorlithra.",
+                "Tak satu pun divisi mampu menjatuhkan sang naga ataupun membalikkan keadaan. Kerajaan yang dahulu indah kini perlahan berubah menjadi hamparan kehancuran dan kehampaan."
+            ]
+        },
+        {
+            "number": 6,
+            "id": "the_forced_retreat",
+            "title": "Mundur dalam Kehancuran",
+            "presentation": "cinematic",
+            "narration": [
+                "Setelah tujuh hari tujuh malam pertempuran, kekuatan Lumerian akhirnya mencapai batasnya. Divisi Pertama tak lagi mampu mempertahankan istana. Divisi Kedua yang terkenal gagah berani terpaksa meninggalkan garis depan. Divisi Ketiga kehilangan kekuatan untuk melakukan manuver cepat yang dahulu menjadi andalannya.",
+                "Divisi Keempat kehilangan sebagian besar pasukan rahasianya, membuat kerajaan semakin sulit mengetahui pergerakan musuh. Kekuatan suci Divisi Kelima pun terkikis oleh kehampaan setelah berhari-hari menghadapi kutukan Vorlithra.",
+                "Melihat tidak ada lagi kemungkinan untuk memenangkan pertempuran, para komandan divisi memerintahkan pasukan yang tersisa untuk mundur. Bukan karena mereka menyerah begitu saja, melainkan karena hanya itulah cara menyelamatkan mereka yang masih hidup."
+            ]
+        },
+        {
+            "number": 7,
+            "id": "the_last_sacrifice",
+            "title": "Pengorbanan Terakhir",
+            "presentation": "playable_then_cinematic",
+            "narration": [
+                "Di tengah mundurnya pasukan, Leonhard menerima kabar bahwa Diana Agartha telah melahirkan seorang anak laki-laki bernama Leonardo. Namun, kebahagiaan itu dibayangi kenyataan bahwa Leonardo mewarisi kekuatan dari kakeknya, Leopold Aldric von Evermont.",
+                "Leonhard memerintahkan sejumlah prajurit untuk mengevakuasi Diana ke kerajaan lain yang aman. Ia juga mempercayakan pertahanan sisa Lumerian kepada para komandan divisi. Sementara itu, Leonhard membawa Leonardo menjauh dari medan perang untuk menyegel kekuatan yang diwariskan kepadanya.",
+                "Dalam pelarian, kekuatan Leonhard terus melemah akibat luka dan energi yang telah terkuras selama perang. Karena kelelahan, ia tidak menyadari bahwa sekelompok demon sedang membuntutinya.",
+                "Dengan sisa kekuatannya, Leonhard berhasil mencapai sebuah desa terpencil yang telah lama mati dan tidak lagi berpenghuni. Di tempat itu, ia menjalankan ritual untuk menyegel kekuatan Leonardo. Namun, ritual tersebut memiliki harga: usia Leonardo bertambah sepuluh tahun dalam sekejap.",
+                "Setelah segel berhasil dibuat, seluruh kekuatan Leonhard akhirnya habis. Ia mengembuskan napas terakhir sambil mendekap Leonardo. Pengorbanannya tidak diketahui oleh rakyat Florian Land; tak seorang pun mengetahui bagaimana Leonhard menghilang ataupun apa yang terjadi pada bayi tersebut.",
+                "Sementara itu, Diana berhasil dievakuasi ke sebuah kerajaan lain yang aman dan makmur. Di sana, ia terhindar dari kehancuran yang menimpa Lumerian."
+            ],
+            "ending": "Akhir dari kisah Leonhard. Kisah Leonardo dimulai sepuluh tahun kemudian."
+        }
+    ],
+    "continuity_notes": [
+        "Serana Anys Seiveira adalah teman masa kecil Leonardo. Ia bukan kekasih Leonhard dan bukan ibu Leonardo.",
+        "Ibu Leonardo bernama Diana Agartha. Jangan mengganti nama atau perannya dengan Serana.",
+        "Ayah Leonardo adalah Leonhard von Evermont. Kakek Leonardo dari pihak ayah adalah Leopold Aldric von Evermont.",
+        "Catatan siswa menyebut Leonardo mewarisi kekuatan dari Leopold. Naskah cerita sebelumnya menyebut warisan itu sebagai kutukan kegelapan. Pastikan apakah kekuatan warisan dan kutukan tersebut memang hal yang sama sebelum menetapkan istilah final.",
+        "The Last Dawn of Heroes dan Perang Langit yang Runtuh adalah dua peristiwa berbeda yang terjadi pada generasi berbeda. The Last Dawn of Heroes merupakan peristiwa pada generasi Leopold Aldric von Evermont, sedangkan Perang Langit yang Runtuh merupakan perang pada generasi Leonhard von Evermont.",
+        "Leopold disebut sebagai salah satu dari Lima Kesatria Agung. Belum dipastikan apakah kelompok tersebut merupakan kelompok yang sama dengan lima kesatria yang dipimpin Leonhard pada masa Perang Langit yang Runtuh.",
+        "Christopher Wald Ramses adalah saudara jauh Leonardo. Kakeknya merupakan saudara kandung Leopold Aldric von Evermont.",
+        "Serana adalah putri Lyra Seiveira dan Kaelen Ravenshire. Ia mencari batu-batu sihir di berbagai negara untuk memperoleh kekuatan demi melindungi Lumerian.",
+        "Ernest tidak disebut dalam catatan karakter terbaru. Nama dan hubungannya dengan Serana tidak dimasukkan ke naskah saat ini.",
+        "Nama tokoh utama distandardisasi menjadi Leonardo Schrüdinger von Evermont karena bentuk Leonardo digunakan secara konsisten dalam naskah utama, meskipun satu judul catatan siswa menulis Leonard.",
+        "Tinggi Leonardo 181 cm dicatat dalam profil karakter. Karena ia masih bayi saat prolog dan berusia sepuluh tahun setelah ritual, perlu ditentukan fase usia yang dimaksud untuk tinggi tersebut; jangan tampilkan angka ini sebagai tinggi Leonardo saat bayi."
+    ]
 }
