@@ -16,15 +16,15 @@ class MainMenu:
         self.overlay.fill((0, 0, 0, 110))
 
         self.options = [
-            {"label": "Mulai Permainan", "action": "new_game", "enabled": True},
-            {"label": "Lanjutkan", "action": "continue", "enabled": False},
-            {"label": "Keluar", "action": "exit", "enabled": True},
+            {"label": "Start", "action": "new_game", "enabled": True},
+            # {"label": "Lanjutkan", "action": "continue", "enabled": False},
+            {"label": "Exit", "action": "exit", "enabled": True},
         ]
 
         self.selected_index = 0
         self.button_rects = []
 
-        self.title_font = self.font_manager.get("main", 76)
+        self.title_font = self.font_manager.get("main", 120)
         self.option_font = self.font_manager.get("main", 36)
 
         self._create_layout()
@@ -138,7 +138,7 @@ class MainMenu:
         surface.blit(self.overlay, (0, 0))
 
         # Title
-        title = self.title_font.render("RPG Tampak Atas", True, (235, 220, 180))
+        title = self.title_font.render("Aetherveil", True, (235, 220, 180))
 
         title_rect = title.get_rect(
             center=(self.screen_width // 2, self.screen_height // 3)
