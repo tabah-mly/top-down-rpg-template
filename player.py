@@ -349,7 +349,7 @@ class Player:
 
             for enemy in self.enemies:
                 if projectile.collides_with(enemy):
-                    enemy.take_damage(self.stats["damage"])
+                    enemy.take_damage(self.stats["damage"], source_position=self.pos)
                     projectile.alive = False
                     break
 
@@ -376,7 +376,7 @@ class Player:
     def check_attack_collisions(self):
         for enemy in self.enemies:
             if self.attack.collides_with(enemy):
-                enemy.take_damage(self.stats["damage"])
+                enemy.take_damage(self.stats["damage"], source_position=self.pos)
 
         for npc in self.npcs:
             if self.attack.collides_with(npc):

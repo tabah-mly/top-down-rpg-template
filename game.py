@@ -982,21 +982,40 @@ class Game:
         self.screen.fill((0, 0, 0))
         self.tilemap.draw(self.screen, self.camera)
 
-        for enemy in self.enemies:
-            enemy.draw(self.screen, self.camera)
-
         nearby_npc = None
         if not self.dialog.active:
             nearby_npc = self.get_nearby_npc()
 
-        for npc in self.npcs:
-            npc.draw(
-                self.screen,
-                self.camera,
-                interact_icon=(self.interact_icon if npc == nearby_npc else None),
-            )
+        # Draw dynamic characters in world-depth order. The bottom edge of
+        # each body collider represents its ground-contact position, so an
+        # entity farther down the screen naturally appears in front.
+        depth_entities = []
+        for enemy in self.enemies:
+            if enemy.alive:
+                depth_entities.append((enemy.body_collider.rect.bottom, 0, enemy))
 
-        self.player.draw(self.screen, self.camera)
+        for npc in self.npcs:
+            depth_entities.append((npc.body_collider.rect.bottom, 1, npc))
+
+        depth_entities.append((self.player.body_collider.rect.bottom, 2, self.player))
+        depth_entities.sort(key=lambda entry: entry[0])
+
+        for _, entity_type, entity in depth_entities:
+            if entity_type == 0:
+                entity.draw(self.screen, self.camera)
+            elif entity_type == 1:
+                entity.draw(
+                    self.screen,
+                    self.camera,
+                    interact_icon=(self.interact_icon if entity == nearby_npc else None),
+                )
+            else:
+                self.player.draw_sprites(self.screen, self.camera)
+
+        # Keep attack visuals above the sorted character sprites, as in the
+        # previous rendering behavior. Character bodies themselves are Y-sorted.
+        self.player.draw_attack(self.screen, self.camera)
+
         if self.mission_phase == "active":
             player_screen_pos = self.camera.apply(self.player.rect).center
             self.pointer.draw(self.screen, player_screen_pos)
@@ -1147,7 +1166,7 @@ class Game:
         overlay.fill((5, 7, 12, 175))
         self.screen.blit(overlay, (0, 0))
 
-        panel_width = min(900, self.screen_width - 48)
+        panel_width = min(1000, self.screen_width - 48)
         panel_height = 250
         panel = pygame.Rect(0, 0, panel_width, panel_height)
         panel.center = (self.screen_width // 2, self.screen_height // 2)

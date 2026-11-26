@@ -1,4 +1,5 @@
 import os
+import math
 import pygame
 
 from animated_sprite import AnimatedSprite
@@ -11,6 +12,7 @@ class Enemy:
     # Share immutable sprite frames between enemies of the same visual type.
     # This prevents loading and slicing the same PNG hundreds of times in waves.
     _frame_cache = {}
+    _white_frame_cache = {}
 
     def __init__(self, x, y, name, config, path=None):
         self.name = name
@@ -30,6 +32,17 @@ class Enemy:
 
         self.damage = float(config.get("damage", 10))
         self.speed = float(config.get("speed", 60))
+
+        # Hit feedback. Bosses remain completely immune to knockback, but
+        # still receive the brief white damage flash for visual confirmation.
+        configured_knockback = max(0.0, float(config.get("knockback_force", 190)))
+        self.knockback_force = 0.0 if self.is_boss else configured_knockback
+        self.knockback_decay = max(0.1, float(config.get("knockback_decay", 12.0)))
+        self.knockback_velocity = pygame.Vector2()
+        self.damage_flash_duration = max(
+            0.0, float(config.get("damage_flash_duration", 0.12))
+        )
+        self.damage_flash_timer = 0.0
 
         self.alive = True
         self.can_be_damaged = True
@@ -159,7 +172,23 @@ class Enemy:
         if not self.alive:
             return
 
+        self.damage_flash_timer = max(0.0, self.damage_flash_timer - dt)
         self.attack_timer = max(0.0, self.attack_timer - dt)
+
+        # Knockback briefly interrupts enemy AI movement. The displacement
+        # still passes through the normal collision-aware move() method.
+        if self.knockback_velocity.length_squared() > 1.0:
+            moved = self.move(self.knockback_velocity * dt)
+            if not moved:
+                # Do not keep pushing against walls or other blockers.
+                self.knockback_velocity *= 0.12
+            self.knockback_velocity *= math.exp(-self.knockback_decay * dt)
+            if self.knockback_velocity.length_squared() < 64.0:
+                self.knockback_velocity.update(0, 0)
+
+            self.set_animation("idle")
+            self.animator.update(dt)
+            return
 
         # Finish the current attack animation before choosing another action.
         if self.state == "attack":
@@ -213,11 +242,26 @@ class Enemy:
     # Drawing
     # ======================================================
 
+    @classmethod
+    def _get_white_flash_frame(cls, image):
+        """Return a cached white-tinted frame while preserving sprite alpha."""
+        key = id(image)
+        flashed = cls._white_frame_cache.get(key)
+        if flashed is None:
+            flashed = image.copy()
+            # RGB_MAX turns visible pixels white without making transparent
+            # pixels opaque (the alpha channel is left unchanged).
+            flashed.fill((255, 255, 255), special_flags=pygame.BLEND_RGB_MAX)
+            cls._white_frame_cache[key] = flashed
+        return flashed
+
     def draw(self, surface, camera):
         if not self.alive:
             return
 
         image = self.animator.image
+        if self.damage_flash_timer > 0:
+            image = self._get_white_flash_frame(image)
 
         if self.facing == "left":
             image = pygame.transform.flip(image, True, False)
@@ -402,16 +446,40 @@ class Enemy:
     # Combat
     # ======================================================
 
-    def take_damage(self, amount):
+    def take_damage(self, amount, source_position=None):
         if not self.alive or not self.can_be_damaged:
-            return
+            return False
 
         self.hp = max(0, self.hp - int(amount))
+        self.damage_flash_timer = self.damage_flash_duration
+
+        # Apply a small push away from the attacker. Bosses have a force of
+        # zero by design, so they flash on hit without being displaced.
+        if self.knockback_force > 0:
+            if source_position is None and self.player is not None:
+                source_position = self.player.pos
+
+            if source_position is not None:
+                direction = self.pos - pygame.Vector2(source_position)
+            else:
+                direction = pygame.Vector2(1 if self.facing == "right" else -1, 0)
+
+            if direction.length_squared() == 0:
+                direction = pygame.Vector2(1 if self.facing == "right" else -1, 0)
+            else:
+                direction = direction.normalize()
+
+            self.knockback_velocity += direction * self.knockback_force
+            # A hit interrupts an enemy's current attack, giving the knockback
+            # feedback a clear visual and preventing a hit animation from
+            # continuing while the sprite is being pushed away.
+            self.set_animation("idle")
 
         print(f"{self.name} took {amount} damage. " f"HP: {self.hp}/{self.max_hp}")
 
         if self.hp <= 0:
             self.die()
+        return True
 
     def die(self):
         self.alive = False

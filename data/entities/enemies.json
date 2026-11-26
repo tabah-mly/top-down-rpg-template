@@ -31,7 +31,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "demon_raider": {
         "sprite": "orc",
@@ -65,7 +68,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "orc": {
         "sprite": "orc",
@@ -99,7 +105,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "vampire": {
         "sprite": "vampire",
@@ -133,7 +142,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "orc_assault_minion": {
         "sprite": "orc",
@@ -167,7 +179,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "orc_boss": {
         "sprite": "orc",
@@ -201,7 +216,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 0,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "orc_war": {
         "sprite": "orc",
@@ -235,7 +253,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "skeleton_war": {
         "sprite": "skeleton",
@@ -263,13 +284,16 @@
             "height": 45,
             "offset": [
                 0,
-                18
+                20
             ]
         },
         "attack_range_offset": [
             0,
-            20
-        ]
+            0
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "vampire_war": {
         "sprite": "vampire",
@@ -303,7 +327,10 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     },
     "vampire_war_elite": {
         "sprite": "vampire",
@@ -337,6 +364,9 @@
         "attack_range_offset": [
             0,
             0
-        ]
+        ],
+        "knockback_force": 190,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
     }
 }
