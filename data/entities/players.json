@@ -17,18 +17,131 @@
         "body_collider": {
             "width": 24,
             "height": 16,
-            "offset": [0, 25]
+            "offset": [
+                0,
+                25
+            ]
         },
         "hurtbox": {
             "width": 30,
             "height": 42,
-            "offset": [0, 10]
+            "offset": [
+                0,
+                10
+            ]
         },
         "attack": {
             "duration": 0.15,
             "hit_radius": 50,
             "hit_range": 80,
-            "offset": [0, 0]
+            "offset": [
+                0,
+                0
+            ]
+        },
+        "visual_effects": {
+            "melee_layers": {
+                "enabled": true,
+                "outer": {
+                    "enabled": true,
+                    "scale": 1.24,
+                    "opacity": 0.5,
+                    "color": [
+                        232,
+                        202,
+                        137
+                    ]
+                },
+                "middle": {
+                    "enabled": true,
+                    "scale": 1.12,
+                    "opacity": 0.4,
+                    "color": [
+                        216,
+                        232,
+                        246
+                    ]
+                }
+            },
+            "melee_sparks": {
+                "enabled": true,
+                "count": 18,
+                "trigger_progress": 0.48,
+                "particles_per_spawn": 1,
+                "lifetime": [
+                    0.12,
+                    0.28
+                ],
+                "size": [
+                    1.5,
+                    3.5
+                ],
+                "speed": [
+                    20,
+                    75
+                ],
+                "spread_degrees": 140,
+                "drag": 6.0,
+                "max_particles": 36,
+                "colors": [
+                    [
+                        255,
+                        250,
+                        232
+                    ],
+                    [
+                        232,
+                        202,
+                        137
+                    ],
+                    [
+                        216,
+                        232,
+                        246
+                    ]
+                ],
+                "placement": "crescent_perimeter",
+                "edge_offset": 2.0,
+                "position_jitter": 4.0,
+                "normal_jitter": 2.0
+            },
+            "projectile_trail": {
+                "enabled": true,
+                "spawn_interval": 0.018,
+                "particles_per_spawn": 1,
+                "lifetime": [
+                    0.14,
+                    0.3
+                ],
+                "size": [
+                    1.2,
+                    3.0
+                ],
+                "speed": [
+                    12,
+                    42
+                ],
+                "spread_degrees": 36,
+                "drag": 5.0,
+                "max_particles": 36,
+                "colors": [
+                    [
+                        255,
+                        252,
+                        238
+                    ],
+                    [
+                        232,
+                        202,
+                        137
+                    ],
+                    [
+                        216,
+                        232,
+                        246
+                    ]
+                ]
+            }
         }
     }
 }

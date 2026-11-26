@@ -95,8 +95,19 @@ class Player:
         self.prev_mouse_left = False
         self.prev_mouse_right = False
 
+        self.visual_effects = self.config.get("visual_effects", {})
+        melee_sparks = self.visual_effects.get(
+            "melee_sparks", self.visual_effects.get("melee_particles", {})
+        )
+        melee_layers = self.visual_effects.get("melee_layers", {})
+        projectile_trail = self.visual_effects.get("projectile_trail", {})
+
         self.projectiles = []
-        self.attack = Attack(offset=attack_config.get("offset", (0, 8)))
+        self.attack = Attack(
+            offset=attack_config.get("offset", (0, 8)),
+            particle_config=melee_sparks,
+            layer_config=melee_layers,
+        )
         self.attack.duration = max(0.01, float(attack_config.get("duration", 0.15)))
         self.attack.hit_radius = max(1, int(attack_config.get("hit_radius", 60)))
         self.attack.hit_range = float(attack_config.get("hit_range", 80))
@@ -118,6 +129,8 @@ class Player:
         self.attack.progress = 0
         self.attack.has_hit = False
         self.attack.hit_targets.clear()
+        self.attack.particles.clear()
+        self.attack.particle_timer = 0.0
 
         # Do not carry projectiles into another scene or map.
         self.projectiles.clear()
@@ -328,7 +341,10 @@ class Player:
             if self.pointer.ranged:
                 if self.pointer.direction.length_squared() > 0:
                     projectile = Projectile(
-                        self.pos, self.pointer.direction, self.stats["speed"]
+                        self.pos,
+                        self.pointer.direction,
+                        self.stats["speed"],
+                        trail_config=self.visual_effects.get("projectile_trail", {}),
                     )
                     self.projectiles.append(projectile)
 
@@ -338,7 +354,7 @@ class Player:
 
         self.prev_mouse_left = mouse[0]
 
-        self.projectiles = [p for p in self.projectiles if p.alive]
+        self.projectiles = [p for p in self.projectiles if p.alive or p.has_trail]
 
     def update_projectiles(self, dt):
         for projectile in self.projectiles:
@@ -364,7 +380,9 @@ class Player:
 
         # Remove expired or hit projectiles
         self.projectiles = [
-            projectile for projectile in self.projectiles if projectile.alive
+            projectile
+            for projectile in self.projectiles
+            if projectile.alive or projectile.has_trail
         ]
 
     def draw_attack(self, surface, camera):
