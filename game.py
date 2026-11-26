@@ -133,7 +133,7 @@ class Game:
         self.wave_spawn_timer = 0.0
         self.mission_failure_reason = None
         self.wave_intro_timer = 0.0
-        self.wave_intro_duration = 1.6
+        self.wave_intro_duration = 2.5
         self.wave_kills = 0
         self.wave_enemy_total = None
         self.total_mission_kills = 0
@@ -1147,7 +1147,7 @@ class Game:
         overlay.fill((5, 7, 12, 175))
         self.screen.blit(overlay, (0, 0))
 
-        panel_width = min(700, self.screen_width - 48)
+        panel_width = min(900, self.screen_width - 48)
         panel_height = 250
         panel = pygame.Rect(0, 0, panel_width, panel_height)
         panel.center = (self.screen_width // 2, self.screen_height // 2)
