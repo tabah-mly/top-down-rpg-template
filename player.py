@@ -8,9 +8,20 @@ from debug import DEBUG, BODY_COLLISION_COLOR, HURTBOX_COLOR
 
 
 class Player:
-    def __init__(self, x, y, pointer, character="leonardo"):
-        self.character = character
+    def __init__(self, x, y, pointer, character="leonardo", config=None):
+        """Create a player from a profile loaded by EntityDatabase.
+
+        ``character`` remains as a fallback sprite-folder name for compatibility,
+        while the JSON profile is the source of truth for configurable values.
+        """
+        self.config = config or {}
+        self.character = self.config.get("sprite", character)
         self.animations = {}
+
+        frame_width = int(self.config.get("frame_width", 20))
+        frame_height = int(self.config.get("frame_height", 26))
+        sprite_scale = int(self.config.get("sprite_scale", 3))
+        animation_speed = float(self.config.get("animation_speed", 0.1))
 
         directions = ["up", "down", "left", "right"]
         states = ["idle", "walk"]
@@ -19,33 +30,31 @@ class Player:
             for direction in directions:
                 key = f"{state}_{direction}"
                 frames = SpriteSheet(
-                    f"assets/imgs/sprites/{self.character}/{key}.png", 20, 26, scale=3
+                    f"assets/imgs/sprites/{self.character}/{key}.png",
+                    frame_width,
+                    frame_height,
+                    scale=sprite_scale,
                 ).frames
-                self.animations[key] = AnimatedSprite(frames, speed=0.1)
+                self.animations[key] = AnimatedSprite(frames, speed=animation_speed)
 
-        # Leonhard is deliberately tougher than the future protagonist.
-        # Keep the Leonardo defaults available for the sequel.
-        if character == "leonhard":
-            self.stats = {
-                "max_hp": 180,
-                "hp": 180,
-                "speed": 230,
-                "damage": 35,
-                "knockback": 30,
-                "stun": 0,
-            }
-        else:
-            self.stats = {
-                "max_hp": 100,
-                "hp": 100,
-                "speed": 250,
-                "damage": 20,
-                "knockback": 20,
-                "stun": 0,
-            }
+        default_stats = {
+            "max_hp": 100,
+            "hp": 100,
+            "speed": 250,
+            "damage": 20,
+            "knockback": 20,
+            "stun": 0,
+        }
+        self.stats = {**default_stats, **self.config.get("stats", {})}
+        self.stats["max_hp"] = max(1, int(self.stats["max_hp"]))
+        self.stats["hp"] = max(0, min(self.stats["max_hp"], int(self.stats["hp"])))
+        self.stats["speed"] = float(self.stats["speed"])
+        self.stats["damage"] = float(self.stats["damage"])
 
         self.invulnerability_timer = 0.0
-        self.invulnerability_duration = 0.65
+        self.invulnerability_duration = max(
+            0.0, float(self.config.get("invulnerability_duration", 0.65))
+        )
 
         self.state = "idle"
         self.facing = "down"
@@ -53,11 +62,19 @@ class Player:
         self.pos = pygame.Vector2(x, y)
         self.rect = self.animator.image.get_rect(center=(x, y))
 
-        # Physical collision area
-        self.body_collider = CollisionBox(width=24, height=16, offset=(0, 25))
-
-        # Area that can receive damage
-        self.hurtbox = CollisionBox(width=30, height=42, offset=(0, 10))
+        # Physical collision and damage-receiving areas come from the player profile.
+        body_config = self.config.get("body_collider", {})
+        hurtbox_config = self.config.get("hurtbox", {})
+        self.body_collider = CollisionBox(
+            width=int(body_config.get("width", 24)),
+            height=int(body_config.get("height", 16)),
+            offset=body_config.get("offset", (0, 25)),
+        )
+        self.hurtbox = CollisionBox(
+            width=int(hurtbox_config.get("width", 30)),
+            height=int(hurtbox_config.get("height", 42)),
+            offset=hurtbox_config.get("offset", (0, 10)),
+        )
 
         self.update_collision_boxes()
 
@@ -72,13 +89,17 @@ class Player:
 
         self.is_attack = False
         self.attack_timer = 0
-        self.attack_duration = 0.15
+        attack_config = self.config.get("attack", {})
+        self.attack_duration = max(0.01, float(attack_config.get("duration", 0.15)))
 
         self.prev_mouse_left = False
         self.prev_mouse_right = False
 
         self.projectiles = []
-        self.attack = Attack()
+        self.attack = Attack(offset=attack_config.get("offset", (0, 8)))
+        self.attack.duration = max(0.01, float(attack_config.get("duration", 0.15)))
+        self.attack.hit_radius = max(1, int(attack_config.get("hit_radius", 60)))
+        self.attack.hit_range = float(attack_config.get("hit_range", 80))
         self.attack.is_debug = DEBUG
 
         self.can_attack = True
