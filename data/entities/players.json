@@ -6,8 +6,8 @@
         "sprite_scale": 3,
         "animation_speed": 0.1,
         "stats": {
-            "max_hp": 180,
-            "hp": 180,
+            "max_hp": 2000,
+            "hp": 2000,
             "speed": 230,
             "damage": 35,
             "knockback": 30,
@@ -50,7 +50,10 @@
                         232,
                         202,
                         137
-                    ]
+                    ],
+                    "scale_x": 1.28,
+                    "scale_y": 1.2,
+                    "front_offset": 6.0
                 },
                 "middle": {
                     "enabled": true,

@@ -17,7 +17,7 @@
                 "id": "orc_boss"
             },
             "minions": {
-                "id": "skeleton_war",
+                "id": "orc_assault_minion",
                 "count": 15
             }
         },
