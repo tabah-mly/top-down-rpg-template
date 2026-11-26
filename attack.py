@@ -19,7 +19,11 @@ def _crescent_perimeter_geometry(width, height):
     """
     width = max(1, int(width))
     height = max(1, int(height))
-    shape = pygame.Surface((width, 200), pygame.SRCALPHA)
+    # Keep the same crescent silhouette even when the outer aura is stretched.
+    # The cutout must extend beyond the bottom of the outer ellipse so the
+    # crescent remains open instead of turning into a closed ring.
+    canvas_height = max(200, height + 40)
+    shape = pygame.Surface((width, canvas_height), pygame.SRCALPHA)
     pygame.draw.ellipse(shape, (255, 255, 255, 255), (0, 0, width, height))
     pygame.draw.ellipse(shape, (0, 0, 0, 0), (0, width / 2, width, height))
     mask = pygame.mask.from_surface(shape)
@@ -144,17 +148,27 @@ class Attack:
             -vector.x * sine + vector.y * cosine,
         )
 
-    def _outer_spark_scale(self):
-        """Use the outermost enabled slash layer as the particle boundary."""
-        scale = 1.0
+    def _outer_spark_profile(self):
+        """Return the outermost layer's X/Y scale and forward offset.
+
+        Sparks use the same stretched and shifted perimeter as the gold aura,
+        so the particles continue to hug the visible outer edge.
+        """
         if not self.layers_enabled:
-            return scale
+            return 1.0, 1.0, 0.0
 
         for name in ("outer", "middle"):
             layer = self.layer_config.get(name, {})
-            if layer.get("enabled", True):
-                scale = max(scale, float(layer.get("scale", 1.0)))
-        return scale
+            if not layer.get("enabled", True):
+                continue
+
+            base_scale = max(1.0, float(layer.get("scale", 1.0)))
+            scale_x = max(1.0, float(layer.get("scale_x", base_scale)))
+            scale_y = max(1.0, float(layer.get("scale_y", base_scale)))
+            front_offset = float(layer.get("front_offset", 0.0))
+            return scale_x, scale_y, front_offset
+
+        return 1.0, 1.0, 0.0
 
     def _emit_melee_sparks(self):
         """Place a one-shot spark burst around the actual crescent perimeter."""
@@ -162,9 +176,9 @@ class Attack:
             return
 
         base_width, base_height = self._current_visual_size()
-        outer_scale = self._outer_spark_scale()
-        width = max(1, round(base_width * outer_scale))
-        height = max(1, round(base_height * outer_scale))
+        scale_x, scale_y, front_offset = self._outer_spark_profile()
+        width = max(1, round(base_width * scale_x))
+        height = max(1, round(base_height * scale_y))
         mask, outline = _crescent_perimeter_geometry(width, height)
 
         if not outline:
@@ -175,8 +189,11 @@ class Attack:
         # still allowing natural clusters instead of a perfectly spaced ring.
         count = min(self.spark_count, len(outline))
         sampled_points = random.sample(outline, count)
-        center_local = pygame.Vector2(width / 2, 100)
-        world_center = self.visual_pos - self.offset
+        canvas_height = max(200, height + 40)
+        center_local = pygame.Vector2(width / 2, canvas_height / 2)
+        world_center = (
+            self.visual_pos - self.offset + self.direction * front_offset
+        )
 
         for point in sampled_points:
             px, py = int(point[0]), int(point[1])
@@ -265,7 +282,10 @@ class Attack:
     def draw_cres(self, surface, t, pos=(0, 0), size=(100, 150), angle=0, color=None):
         w, h = size
         x, y = pygame.Vector2(pos) - self.offset
-        attack_surface = pygame.Surface((w, 200), pygame.SRCALPHA)
+        # A taller canvas prevents a stretched outer aura from clipping while
+        # keeping the lower cutout beyond the crescent's outer ellipse.
+        canvas_height = max(200, int(h) + 40)
+        attack_surface = pygame.Surface((w, canvas_height), pygame.SRCALPHA)
 
         slash_color = self.color if color is None else color
         pygame.draw.ellipse(attack_surface, slash_color, (0, 0, w, h))
@@ -291,10 +311,20 @@ class Attack:
         # Draw the broadest and faintest aura first, then the tighter highlight.
         outer = self.layer_config.get("outer", {})
         if outer.get("enabled", True):
-            scale = max(1.0, float(outer.get("scale", 1.24)))
-            outer_size = (max(1, round(size[0] * scale)), max(1, round(size[1] * scale)))
+            base_scale = max(1.0, float(outer.get("scale", 1.24)))
+            scale_x = max(1.0, float(outer.get("scale_x", base_scale)))
+            scale_y = max(1.0, float(outer.get("scale_y", base_scale)))
+            outer_size = (
+                max(1, round(size[0] * scale_x)),
+                max(1, round(size[1] * scale_y)),
+            )
+            front_offset = float(outer.get("front_offset", 0.0))
+            outer_position = screen_pos + self.direction * front_offset
             color = self._layer_rgba(outer, (232, 202, 137), 0.25)
-            self.draw_cres(surface, t, screen_pos, size=outer_size, angle=self.base_angle, color=color)
+            self.draw_cres(
+                surface, t, outer_position, size=outer_size,
+                angle=self.base_angle, color=color
+            )
 
         middle = self.layer_config.get("middle", {})
         if middle.get("enabled", True):
