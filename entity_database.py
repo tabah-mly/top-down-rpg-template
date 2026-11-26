@@ -12,6 +12,7 @@ class EntityDatabase:
         self.load_category("npc", data_dir / "npcs.json")
         self.load_category("enemy", data_dir / "enemies.json")
         self.load_category("boss", data_dir / "bosses.json")
+        self.load_category("player", data_dir / "players.json")
 
     def load_category(self, category, path):
         with open(path, "r", encoding="utf-8") as file:

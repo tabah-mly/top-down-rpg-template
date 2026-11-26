@@ -157,11 +157,15 @@ class Game:
         self.camera.set_bounds(self.tilemap.width, self.tilemap.height)
         spawn_position = self.tilemap.get_spawn("PlayerSpawn")
 
+        # The prologue currently uses Leonhard only. His configurable stats,
+        # sprite settings, collision box, and hurtbox are loaded from JSON.
+        player_profile = self.tilemap.entity_database.get("player", "leonhard")
         self.player = Player(
             spawn_position.x,
             spawn_position.y,
             self.pointer,
             character="leonhard",
+            config=player_profile,
         )
         self.camera.follow(self.player.rect)
 
