@@ -26,7 +26,7 @@
         },
         "attack": {
             "duration": 0.15,
-            "hit_radius": 60,
+            "hit_radius": 50,
             "hit_range": 80,
             "offset": [0, 0]
         }
