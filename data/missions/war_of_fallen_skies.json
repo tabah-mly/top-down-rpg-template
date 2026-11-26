@@ -74,7 +74,7 @@
         {
             "wave": 5,
             "mode": "elimination",
-            "duration": 10,
+            "duration": 20,
             "spawn": false,
             "objective": "Eliminate all enemies remaining before time runs out."
         }
