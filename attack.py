@@ -60,7 +60,7 @@ class Attack:
 
         self.visual_pos = pygame.Vector2(player_pos) + self.direction * distance
 
-        self.hit_pos = self.visual_pos + self.direction * 60
+        self.hit_pos = self.visual_pos + self.direction * 30
 
         # Only allow hits near the peak of the attack
         self.has_hit = 0.2 < t < 0.8
