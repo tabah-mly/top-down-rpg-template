@@ -24,30 +24,20 @@
         {
             "wave": 2,
             "boss": {
-                "id": "orc_boss"
+                "id": "skeleton_boss"
             },
             "minions": {
-                "id": "orc_assault_minion",
+                "id": "skeleton_assault_minion",
                 "count": 15
             }
         },
         {
             "wave": 3,
             "boss": {
-                "id": "orc_boss"
+                "id": "vampire_boss"
             },
             "minions": {
-                "id": "orc_assault_minion",
-                "count": 15
-            }
-        },
-        {
-            "wave": 4,
-            "boss": {
-                "id": "orc_boss"
-            },
-            "minions": {
-                "id": "orc_assault_minion",
+                "id": "vampire_assault_minion",
                 "count": 15
             }
         }

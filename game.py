@@ -124,6 +124,9 @@ class Game:
         self.mission_phase = "idle"
         self.current_mission_id = None
         self.current_map_path = None
+        # Preserve Leonhard's HP when he first enters War of Fallen Skies.
+        # Retrying that mission restores this entry value instead of healing him.
+        self.war_mission_entry_hp = None
         self.ritual_rect = None
 
         # Wave-driven mission state. Mission rules live in data/missions/*.json.
@@ -149,6 +152,7 @@ class Game:
 
         self.current_map_path = "prologue_first_assault.tmx"
         self.current_mission_id = "first_assault"
+        self.war_mission_entry_hp = None
         self.ritual_rect = None
 
         self.tilemap = TiledMap(
@@ -257,8 +261,15 @@ class Game:
         else:
             raise ValueError(f"Aksi lanjutan narasi tidak dikenal: {action}")
 
-    def start_war_mission(self):
-        """Load Scene 5 and prepare its five configurable survival/elimination waves."""
+    def start_war_mission(self, retry=False):
+        """Load the war battlefield without healing; retries restore entry HP."""
+        if retry and self.war_mission_entry_hp is not None:
+            entry_hp = self.war_mission_entry_hp
+        else:
+            # The first entry carries over the HP remaining after First Assault.
+            entry_hp = int(self.player.stats["hp"])
+            self.war_mission_entry_hp = entry_hp
+
         self.change_map("prologue_war_battlefield.tmx", "PlayerSpawn", load_enemies=False)
         self.current_mission_id = "war_battlefield"
         self.load_mission_config("war_of_fallen_skies")
@@ -268,8 +279,10 @@ class Game:
         self.mission_phase = "briefing"
         self.mission_complete = False
         self.mission_failure_reason = None
-        # Treat each major playable sequence as a fresh mission attempt.
-        self.player.stats["hp"] = self.player.stats["max_hp"]
+        # Preserve the HP checkpoint from the first entry; never grant a free heal.
+        self.player.stats["hp"] = max(
+            0, min(int(self.player.stats["max_hp"]), int(entry_hp))
+        )
 
     def start_village_sequence(self):
         """Load Scene 7 and register the Tiled ritual marker for interaction."""
@@ -311,7 +324,7 @@ class Game:
             return
 
         if self.current_mission_id == "war_battlefield":
-            self.start_war_mission()
+            self.start_war_mission(retry=True)
             return
 
         if self.current_mission_id == "abandoned_village":
@@ -499,8 +512,9 @@ class Game:
         # Final elimination wave intentionally spawns nothing.
 
     def build_enemy_config(self, enemy_id, is_boss=False):
-        """Resolve an enemy ID into its single source-of-truth entity profile."""
-        config = self.tilemap.entity_database.get("enemy", enemy_id)
+        """Resolve a minion or boss ID from its dedicated entity database."""
+        category = "boss" if is_boss else "enemy"
+        config = self.tilemap.entity_database.get(category, enemy_id)
 
         # Aggression is intentionally mission-specific: First Assault uses
         # proximity aggro, while War of Fallen Skies uses always-on pursuit.
@@ -1189,12 +1203,12 @@ class Game:
             if self.mission_phase == "briefing":
                 eyebrow = "PROLOG  /  MISI 01"
                 title = "PENYERBUAN PERTAMA"
-                description = "Kalahkan empat komandan iblis beserta pasukan mereka dalam empat gelombang."
+                description = "Kalahkan tiga komandan iblis beserta pasukan mereka dalam tiga gelombang."
                 prompt = "TEKAN ENTER ATAU SPASI UNTUK MEMULAI"
             else:
                 eyebrow = "PROLOG  /  MISI 01 SELESAI"
                 title = "KOTA LUAR AMAN"
-                description = "Keempat komandan dan seluruh pasukannya berhasil dikalahkan. Kota luar aman."
+                description = "Ketiga komandan dan seluruh pasukannya berhasil dikalahkan. Kota luar aman."
                 prompt = "SPASI: LANJUTKAN   R: ULANGI MISI   ESC: MENU"
 
         eyebrow_font = self.font_manager.get("main", 17)

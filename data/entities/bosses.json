@@ -1,1 +1,113 @@
-{}
+{
+    "orc_boss": {
+        "sprite": "orc",
+        "frame_width": 100,
+        "frame_height": 100,
+        "sprite_scale": 6,
+        "animation_speed": 0.1,
+        "max_hp": 300,
+        "damage": 22.0,
+        "speed": 56.0,
+        "movement": "chase",
+        "aggro_range": 520.0,
+        "attack_range": 88.0,
+        "attack_cooldown": 1.5,
+        "body_collider": {
+            "width": 48,
+            "height": 34,
+            "offset": [
+                0,
+                8
+            ]
+        },
+        "hurtbox": {
+            "width": 60,
+            "height": 72,
+            "offset": [
+                0,
+                0
+            ]
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ],
+        "knockback_force": 0,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
+    },
+    "skeleton_boss": {
+        "sprite": "skeleton",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 6,
+        "animation_speed": 0.1,
+        "max_hp": 450,
+        "damage": 28.0,
+        "speed": 48.0,
+        "movement": "chase",
+        "aggro_range": 560.0,
+        "attack_range": 72.0,
+        "attack_cooldown": 1.45,
+        "body_collider": {
+            "width": 48,
+            "height": 34,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 58,
+            "height": 70,
+            "offset": [
+                0,
+                20
+            ]
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ],
+        "knockback_force": 0,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
+    },
+    "vampire_boss": {
+        "sprite": "vampire",
+        "frame_width": 32,
+        "frame_height": 32,
+        "sprite_scale": 6,
+        "animation_speed": 0.1,
+        "max_hp": 620,
+        "damage": 36.0,
+        "speed": 76.0,
+        "movement": "chase",
+        "aggro_range": 600.0,
+        "attack_range": 70.0,
+        "attack_cooldown": 1.25,
+        "body_collider": {
+            "width": 48,
+            "height": 34,
+            "offset": [
+                0,
+                25
+            ]
+        },
+        "hurtbox": {
+            "width": 60,
+            "height": 76,
+            "offset": [
+                0,
+                10
+            ]
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ],
+        "knockback_force": 0,
+        "knockback_decay": 12.0,
+        "damage_flash_duration": 0.12
+    }
+}
