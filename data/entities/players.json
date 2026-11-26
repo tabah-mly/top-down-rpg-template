@@ -6,10 +6,10 @@
         "sprite_scale": 3,
         "animation_speed": 0.1,
         "stats": {
-            "max_hp": 1800000000,
-            "hp": 1800000000,
+            "max_hp": 180,
+            "hp": 180,
             "speed": 230,
-            "damage": 350000000,
+            "damage": 35,
             "knockback": 30,
             "stun": 0
         },
@@ -25,7 +25,7 @@
             "offset": [0, 10]
         },
         "attack": {
-            "duration": 2.15,
+            "duration": 0.15,
             "hit_radius": 60,
             "hit_range": 80,
             "offset": [0, 0]

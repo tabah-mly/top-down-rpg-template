@@ -3,7 +3,7 @@
 Set DEBUG = False to hide all collision and attack debug overlays.
 """
 
-DEBUG = True
+DEBUG = False
 
 # Debug overlay colors (RGB)
 BODY_COLLISION_COLOR = (0, 255, 100)       # Green
