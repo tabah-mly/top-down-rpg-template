@@ -20,6 +20,7 @@ from quest_database import QuestDatabase
 from dialogue_manager import DialogueManager
 from story_state import StoryState
 from enemy import Enemy
+from hud import GameplayHUD
 from debug import DEBUG, BODY_COLLISION_COLOR, HURTBOX_COLOR, PLAYER_MELEE_HITBOX_COLOR, ENEMY_ATTACK_RANGE_COLOR, PROJECTILE_HITBOX_COLOR, MAP_RECT_COLOR, MAP_ELLIPSE_COLOR, MAP_POLYGON_COLOR
 
 
@@ -78,6 +79,9 @@ class Game:
         self.interact_icon = pygame.transform.scale_by(interact_icon, 2)
         self.hud_font = self.font_manager.get("main", 20)
         self.hud_small_font = self.font_manager.get("main", 15)
+        self.gameplay_hud = GameplayHUD(
+            self.font_manager, self.screen_width, self.screen_height
+        )
 
         # Application state
         self.state = "menu"
@@ -128,6 +132,11 @@ class Game:
         self.wave_time_remaining = 0.0
         self.wave_spawn_timer = 0.0
         self.mission_failure_reason = None
+        self.wave_intro_timer = 0.0
+        self.wave_intro_duration = 1.6
+        self.wave_kills = 0
+        self.wave_enemy_total = None
+        self.total_mission_kills = 0
 
         self.debug = DEBUG
 
@@ -400,6 +409,10 @@ class Game:
         self.current_wave_index = -1
         self.wave_time_remaining = 0.0
         self.wave_spawn_timer = 0.0
+        self.wave_intro_timer = 0.0
+        self.wave_kills = 0
+        self.wave_enemy_total = None
+        self.total_mission_kills = 0
         self.mission_failure_reason = None
 
     def get_current_wave(self):
@@ -438,10 +451,17 @@ class Game:
         self.player.set_enemies(self.enemies)
         self.wave_time_remaining = float(wave.get("duration", 0))
         self.wave_spawn_timer = float(wave.get("spawn_interval", 0.75))
+        self.wave_kills = 0
+        self.wave_enemy_total = None
+        self.wave_intro_timer = self.wave_intro_duration
+        self.mission_phase = "wave_intro"
 
         if self.mission_config.get("mode") == "elimination":
             boss_ref = wave.get("boss", {})
             minion_ref = wave.get("minions", {})
+            self.wave_enemy_total = (1 if boss_ref.get("id") else 0) + int(
+                minion_ref.get("count", 0)
+            )
             boss_id = boss_ref.get("id")
             minion_id = minion_ref.get("id")
 
@@ -789,6 +809,10 @@ class Game:
         if event.type != pygame.KEYDOWN:
             return
 
+        # Wave announcements briefly pause gameplay and ignore player input.
+        if self.mission_phase == "wave_intro":
+            return
+
         if self.mission_phase == "briefing":
             if event.key in (pygame.K_SPACE, pygame.K_RETURN):
                 if self.mission_config is not None:
@@ -868,14 +892,29 @@ class Game:
         if self.state != "playing":
             return
 
+        if self.mission_phase == "wave_intro":
+            self.wave_intro_timer = max(0.0, self.wave_intro_timer - dt)
+            if self.wave_intro_timer <= 0.0:
+                self.mission_phase = "active"
+            return
+
         if self.dialog.active or self.mission_phase != "active":
             return
 
+        alive_before_update = sum(1 for enemy in self.enemies if enemy.alive)
         self.player.update(dt, self.camera)
         self.camera.follow(self.player.rect)
 
         for enemy in self.enemies:
             enemy.update(dt)
+
+        # Count actual alive -> dead transitions after player attacks have
+        # been resolved. This works for melee and projectile kills.
+        alive_after_update = sum(1 for enemy in self.enemies if enemy.alive)
+        defeated_now = max(0, alive_before_update - alive_after_update)
+        if defeated_now:
+            self.wave_kills += defeated_now
+            self.total_mission_kills += defeated_now
 
         for npc in self.npcs:
             npc.update(dt)
@@ -971,6 +1010,8 @@ class Game:
 
         if self.mission_phase in ("briefing", "complete"):
             self.draw_mission_overlay()
+        elif self.mission_phase == "wave_intro":
+            self.draw_wave_announcement()
 
         if self.current_mission_id == "abandoned_village" and self.is_near_ritual():
             prompt = self.hud_font.render(
@@ -1032,51 +1073,71 @@ class Game:
         self.screen.blit(panel, (self.screen_width - panel_width - 18, 18))
 
     def draw_hud(self):
-        panel = pygame.Surface((430, 118), pygame.SRCALPHA)
-        panel.fill((12, 14, 20, 210))
-        self.screen.blit(panel, (20, 18))
+        """Draw the minimal prologue HUD using Pixelify Sans and two icons."""
+        wave = self.get_current_wave() if self.mission_config is not None else None
+        timer_remaining = None
+        if self.current_mission_id == "war_battlefield" and wave is not None:
+            timer_remaining = self.wave_time_remaining
 
-        title = self.hud_font.render("LEONHARD VON EVERMONT", True, (238, 226, 190))
-        self.screen.blit(title, (32, 26))
+        self.gameplay_hud.draw(
+            self.screen,
+            self.player,
+            self.current_mission_id,
+            wave_kills=self.wave_kills,
+            wave_enemy_total=self.wave_enemy_total,
+            total_mission_kills=self.total_mission_kills,
+            timer_remaining=timer_remaining,
+        )
 
-        hp = self.player.stats["hp"]
-        max_hp = self.player.stats["max_hp"]
-        pygame.draw.rect(self.screen, (65, 35, 38), (32, 58, 220, 13))
-        hp_width = int(220 * hp / max_hp) if max_hp else 0
-        pygame.draw.rect(self.screen, (177, 61, 65), (32, 58, hp_width, 13))
-        hp_text = self.hud_small_font.render(f"NYAWA {hp}/{max_hp}", True, (245, 240, 230))
-        self.screen.blit(hp_text, (260, 55))
+    def draw_wave_announcement(self):
+        """Draw a compact dark translucent banner over the visible battlefield."""
+        wave = self.get_current_wave() or {}
+        wave_number = self.current_wave_index + 1
+        wave_count = len(self.mission_config.get("waves", [])) if self.mission_config else 0
 
-        remaining = sum(1 for enemy in self.enemies if enemy.alive)
         if self.current_mission_id == "first_assault":
-            objective = f"SASARAN: Usir penyerbu dari persimpangan ({remaining} tersisa)"
-        elif self.current_mission_id == "war_battlefield":
-            objective = f"SASARAN: Hadapi pasukan iblis ({remaining} tersisa)"
+            subtitle = "PENYERBUAN PERTAMA"
         else:
-            objective = "SASARAN: Temukan tempat ritual penyegelan"
+            if wave.get("mode") == "elimination":
+                subtitle = "BABAK AKHIR  |  HABISI MUSUH YANG TERSISA"
+            else:
+                subtitle = "BERTAHAN HIDUP"
 
-        if self.mission_config is not None and self.current_wave_index >= 0:
-            total_waves = len(self.mission_config.get("waves", []))
-            wave = self.get_current_wave() or {}
-            wave_label = f"GELOMBANG {self.current_wave_index + 1}/{total_waves}"
-            if self.mission_config.get("mode") == "survival_then_elimination":
-                seconds = max(0, int(math.ceil(self.wave_time_remaining)))
-                timer = f"{seconds // 60:02d}:{seconds % 60:02d}"
-                phase_label = "ELIMINASI" if wave.get("mode") == "elimination" else "BERTAHAN"
-                wave_label = f"{wave_label}  |  {phase_label}  |  {timer}"
-            objective = f"{wave_label}  |  MUSUH TERSISA: {remaining}"
-        objective_surface = self.hud_small_font.render(objective, True, (238, 232, 215))
-        self.screen.blit(objective_surface, (24, self.screen_height - 34))
+        title = f"GELOMBANG {wave_number} / {wave_count}"
+        banner_width = min(720, self.screen_width - 64)
+        banner_height = 142
+        banner = pygame.Surface((banner_width, banner_height), pygame.SRCALPHA)
+        banner_rect = banner.get_rect(center=(self.screen_width // 2, self.screen_height // 2 - 18))
 
-        controls = self.hud_small_font.render(
-            "WASD: GERAK   KLIK KIRI: SERANG",
-            True,
-            (205, 205, 195),
+        pygame.draw.rect(
+            banner,
+            (8, 12, 19, 208),
+            banner.get_rect(),
+            border_radius=12,
         )
-        self.screen.blit(
-            controls,
-            controls.get_rect(bottomright=(self.screen_width - 22, self.screen_height - 18)),
+        pygame.draw.rect(
+            banner,
+            (190, 158, 91, 230),
+            banner.get_rect(),
+            width=2,
+            border_radius=12,
         )
+
+        title_font = self.font_manager.get("main", 54)
+        subtitle_font = self.font_manager.get("main", 21)
+        title_surface = title_font.render(title, True, (248, 239, 218))
+        subtitle_surface = subtitle_font.render(subtitle, True, (204, 185, 148))
+
+        banner.blit(title_surface, title_surface.get_rect(center=(banner_width // 2, 55)))
+        banner.blit(subtitle_surface, subtitle_surface.get_rect(center=(banner_width // 2, 105)))
+
+        # Brief fade at both ends; the banner remains transparent and does not
+        # dim the entire screen or pause for an unnecessarily long time.
+        elapsed = self.wave_intro_duration - self.wave_intro_timer
+        fade_in = min(1.0, elapsed / 0.18) if self.wave_intro_duration else 1.0
+        fade_out = min(1.0, self.wave_intro_timer / 0.22) if self.wave_intro_duration else 1.0
+        banner.set_alpha(round(255 * min(fade_in, fade_out)))
+        self.screen.blit(banner, banner_rect)
 
     def draw_mission_overlay(self):
         overlay = pygame.Surface(
