@@ -113,6 +113,12 @@ class Enemy:
         if self.aggro_mode not in ("proximity", "always"):
             self.aggro_mode = "proximity"
         self.attack_range = float(config.get("attack_range", 48))
+        # Offset is relative to the enemy's sprite center. The horizontal
+        # component mirrors when the enemy faces left, keeping the range
+        # centered in front of the enemy when its facing direction changes.
+        self.attack_range_offset = pygame.Vector2(
+            config.get("attack_range_offset", (0, 0))
+        )
         self.attack_cooldown = float(config.get("attack_cooldown", 1.4))
         self.attack_timer = 0.0
 
@@ -186,7 +192,12 @@ class Enemy:
         if abs(direction.x) > 1:
             self.set_facing("right" if direction.x > 0 else "left")
 
-        if distance <= self.attack_range:
+        # Measure attack distance from the configurable attack-range origin,
+        # not necessarily from the center of the sprite.
+        attack_center = self.get_attack_range_center()
+        attack_distance = self.player.pos.distance_to(attack_center)
+
+        if attack_distance <= self.attack_range:
             self.set_animation("idle")
             if self.attack_timer <= 0:
                 self.start_attack()
@@ -242,6 +253,13 @@ class Enemy:
         self.body_collider.update(self.pos)
         self.hurtbox.update(self.pos)
 
+    def get_attack_range_center(self):
+        """Return the world-space center of the enemy's attack range."""
+        offset = self.attack_range_offset.copy()
+        if self.facing == "left":
+            offset.x *= -1
+        return self.pos + offset
+
     def draw_collision_debug(self, surface, camera):
         if not self.alive:
             return
@@ -253,7 +271,8 @@ class Enemy:
         # attack_range of the enemy center. Show the range during its attack
         # animation so large waves do not become cluttered with range circles.
         if self.state == "attack":
-            screen_pos = self.pos - camera.offset
+            range_center = self.get_attack_range_center()
+            screen_pos = range_center - camera.offset
             pygame.draw.circle(
                 surface,
                 ENEMY_ATTACK_RANGE_COLOR,

@@ -27,7 +27,11 @@
                 0,
                 10
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "demon_raider": {
         "sprite": "orc",
@@ -57,7 +61,11 @@
                 0,
                 22
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "orc": {
         "sprite": "orc",
@@ -87,7 +95,11 @@
                 0,
                 22
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "vampire": {
         "sprite": "vampire",
@@ -117,7 +129,11 @@
                 0,
                 10
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "orc_assault_minion": {
         "sprite": "orc",
@@ -147,7 +163,11 @@
                 0,
                 0
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "orc_boss": {
         "sprite": "orc",
@@ -177,7 +197,11 @@
                 0,
                 0
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "orc_war": {
         "sprite": "orc",
@@ -207,7 +231,11 @@
                 0,
                 0
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "skeleton_war": {
         "sprite": "skeleton",
@@ -235,9 +263,13 @@
             "height": 45,
             "offset": [
                 0,
-                20
+                18
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            20
+        ]
     },
     "vampire_war": {
         "sprite": "vampire",
@@ -267,7 +299,11 @@
                 0,
                 10
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     },
     "vampire_war_elite": {
         "sprite": "vampire",
@@ -297,6 +333,10 @@
                 0,
                 10
             ]
-        }
+        },
+        "attack_range_offset": [
+            0,
+            0
+        ]
     }
 }
