@@ -33,7 +33,7 @@ class Game:
         self.screen_title = title
 
         self.screen = pygame.display.set_mode(
-            (self.screen_width, self.screen_height), display=1
+            (self.screen_width, self.screen_height)
         )
         pygame.display.set_caption(title)
 
